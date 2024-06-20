@@ -1,7 +1,7 @@
 <template>
     <div class="main-container">
         <div id="carousel_banner">
-            <carousel-3d :width="900" :height="320" :display="3" :controls-visible="true" :controls-prev-html="'❮'"
+            <carousel-3d :width="900" :height="450" :display="3" :controls-visible="true" :controls-prev-html="'❮'"
                 :controls-next-html="'❯'" :autoplay="true" :autoplay-timeout="5000" :autoplay-hover-pause="true"
                 :border="0">
                 <slide v-for="(slide, i) in dataCarousel" :index="i" :key="i" class="slide">
@@ -14,17 +14,43 @@
             </carousel-3d>
         </div>
 
-        <div>
+        <div class="category_div">
             <h2>Nombre de la categoria</h2>
+            <carousel-3d :width="250" :height="180" :display="7" :controls-visible="true" :controls-prev-html="'❮'"
+                :controls-next-html="'❯'" :autoplay="true" :autoplay-timeout="5000" :autoplay-hover-pause="true"
+                :border="0" :disable3d="true" :space="265">
+                <slide v-for="(slide, i) in dataCarouselCategory" :index="i" :key="i"  class="slide_category">
+                    <template slot-scope="{ index, isCurrent, leftIndex, rightIndex }">
+                        <img :data-index="index"
+                            :class="{ current: isCurrent, onLeft: (leftIndex >= 0), onRight: (rightIndex >= 0) }"
+                            :src="slide.front_page" >
+                    </template>
+                </slide>
+            </carousel-3d>
+            <br/>
         </div>
-
+        <div class="category_div">
+            <h2>Nombre de la categoria 2 </h2>
+            <carousel-3d :width="250" :height="180" :display="7" :controls-visible="true" :controls-prev-html="'❮'"
+                :controls-next-html="'❯'" :autoplay="true" :autoplay-timeout="5000" :autoplay-hover-pause="true"
+                :border="0" :disable3d="true" :space="265">
+                <slide v-for="(slide, i) in dataCarouselCategory" :index="i" :key="i" class="slide_category">
+                    <template slot-scope="{ index, isCurrent, leftIndex, rightIndex }">
+                        <img :data-index="index"
+                            :class="{ current: isCurrent, onLeft: (leftIndex >= 0), onRight: (rightIndex >= 0) }"
+                            :src="slide.front_page">
+                    </template>
+                </slide>
+            </carousel-3d>
+            <br />
+        </div>
+       
     </div>
 </template>
 
 <script>
 
 import { Carousel3d, Slide } from 'vue-carousel-3d';
-
 export default {
 
     components: {
@@ -156,7 +182,7 @@ export default {
                     "front_page": "https://arteycultura.com.mx/wp-content/uploads/2014/11/interestelar.jpg",
                     "file": "http://example.com/files/underwater_odyssey.mp4"
                 }
-            ]
+            ],
         }
     },
 }
@@ -168,14 +194,23 @@ export default {
     height: 100vh;
 }
 
-.slide {
-    display: flex;
+.category_div {
+    background: #061523;
+    color: #ffffff;
 }
 
 #carousel_banner {
     margin-top: -20px;
     background: #000000;
 }
+.slide {
+    display: flex;
+}
+.slide_category{
+    display: flex;
+    border-radius:15px;
+}
+
 </style>
 
 <!-- https://wlada.github.io/vue-carousel-3d/api/ -->
