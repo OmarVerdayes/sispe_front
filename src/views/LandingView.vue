@@ -1,12 +1,11 @@
 <template>
     <div class="main-container">
-        <b-carousel id="carousel-1" v-model="slide" :interval="4000" controls indicators background="#ababab"
-             @sliding-start="onSlideStart" @sliding-end="onSlideEnd">
-            <!-- Use v-for to iterate over dataCarousel -->
-            <b-carousel-slide v-for="(item, index) in dataCarousel" :key="index" :img-src="item.front_page"
-                style="height: 400px;">
-                <!-- Customize slide content here if needed -->
-            </b-carousel-slide>
+        <b-carousel id="carousel-1" v-model="slide" :interval="4000" controls background="black"
+            @sliding-start="onSlideStart" @sliding-end="onSlideEnd">
+            <div v-for="(item, index) in dataCarousel" :key="index">
+                <b-carousel-slide :img-src="item.front_page" class="carousel_slide">
+                </b-carousel-slide>
+            </div>
         </b-carousel>
     </div>
 </template>
@@ -78,9 +77,91 @@ export default {
     height: 100vh;
 }
 
-/* Ajusta la altura de las imágenes dentro del carrusel */
+.carousel_slide {
+    /* display: flex;
+    justify-content: center;
+    align-items: center; */
+    background-color: black;
+    max-height: 50vh; /* Valor por defecto */
+}
+
+#carousel-1 {
+    max-height: 50vh; /* Valor por defecto */
+}
+
 .b-carousel-slide img {
-    height: 100%; /* Ajusta la altura al 100% del contenedor */
-    object-fit: cover; /* Ajusta el tamaño de la imagen para cubrir el contenedor */
+    height: 100%;
+    width: 100%;
+    object-fit: cover;
+}
+
+/* Media queries para diferentes tamaños de pantalla */
+
+/* Pantallas de menos de 329.98px */
+@media (max-width: 329.98px) {
+    .carousel_slide {
+        max-height: 17vh; /* Ajustar según tus necesidades */
+    }
+    #carousel-1 {
+        max-height: 17vh; /* Ajustar según tus necesidades */
+    }
+}
+/* Pantallas de 330 a 415.98 px */
+@media (min-width: 330px) and (max-width: 415.98px) {
+    .carousel_slide {
+        max-height: 25vh; /* Ajustar según tus necesidades */
+    }
+    #carousel-1 {
+        max-height: 25vh; /* Ajustar según tus necesidades */
+    }
+}
+
+/* Pantallas  de 416 a 578.98 px */
+@media (min-width: 416px) and (max-width: 575.98px) {
+    .carousel_slide {
+        max-height: 35vh; /* Ajustar según tus necesidades */
+    }
+    #carousel-1 {
+        max-height: 35vh; /* Ajustar según tus necesidades */
+    }
+}
+
+/* Pantallas medianas (576px a 767.98px) */
+@media (min-width: 576px) and (max-width: 767.98px) {
+    .carousel_slide {
+        max-height: 40vh; /* Ajustar según tus necesidades */
+    }
+    #carousel-1 {
+        max-height: 40vh; /* Ajustar según tus necesidades */
+    }
+}
+
+/* Pantallas grandes (768px a 991.98px) */
+@media (min-width: 768px) and (max-width: 991.98px) {
+    .carousel_slide {
+        max-height: 45vh; /* Ajustar según tus necesidades */
+    }
+    #carousel-1 {
+        max-height: 45vh; /* Ajustar según tus necesidades */
+    }
+}
+
+/* Pantallas grandes (768px a 991.98px) */
+@media (min-width: 992px) and (max-width: 1129.98px) {
+    .carousel_slide {
+        max-height: 50vh; /* Ajustar según tus necesidades */
+    }
+    #carousel-1 {
+        max-height: 50vh; /* Ajustar según tus necesidades */
+    }
+}
+/* Pantallas extra grandes (992px y más) */
+@media (min-width: 1130px) {
+    .carousel_slide {
+        max-height: 55vh; /* Valor por defecto para pantallas grandes */
+    }
+    #carousel-1 {
+        max-height: 55vh; /* Valor por defecto para pantallas grandes */
+    }
 }
 </style>
