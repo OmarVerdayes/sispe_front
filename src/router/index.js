@@ -7,9 +7,10 @@ Vue.use(VueRouter)
 const router = new VueRouter({
   mode: 'history',
   base: import.meta.env.BASE_URL,
+  
   routes: [
     {
-      path: '/',
+      path: '/login',
       name: 'home',
       component: HomeView
     },
@@ -22,21 +23,29 @@ const router = new VueRouter({
       component: () => import('../views/AboutView.vue')
     },
     {
-      path: '/home',
-      name: 'home',
-      // route level code-splitting
-      // this generates a separate chunk (About.[hash].js) for this route
-      // which is lazy-loaded when the route is visited.
-      component: () => import('../views/LandingView.vue')
-    },
-    {
       path: '/create_account',
       name: 'create_account',
       // route level code-splitting
       // this generates a separate chunk (About.[hash].js) for this route
       // which is lazy-loaded when the route is visited.
       component: () => import('../views/Create_accountView.vue')
-    }
+    },
+    {
+      path: '/',
+      component: () => import('../views/Navbar.vue'),
+      children: [
+          {
+            path: '',
+            name: 'home',
+            component: () => import('../views/LandingView.vue')
+          },
+          {
+            path: 'movie/:id',
+            name: 'MovieView',
+            component: () => import('../views/MovieView.vue')
+          },
+        ]
+      }
   ]
 })
 

@@ -8,7 +8,7 @@
                     <template slot-scope="{ index, isCurrent, leftIndex, rightIndex }">
                         <img :data-index="index"
                             :class="{ current: isCurrent, onLeft: (leftIndex >= 0), onRight: (rightIndex >= 0) }"
-                            :src="slide.front_page">
+                            :src="slide.front_page" >
                     </template>
                 </slide>
             </carousel-3d>
@@ -23,7 +23,7 @@
                     <template slot-scope="{ index, isCurrent, leftIndex, rightIndex }">
                         <img :data-index="index"
                             :class="{ current: isCurrent, onLeft: (leftIndex >= 0), onRight: (rightIndex >= 0) }"
-                            :src="slide.front_page" >
+                            :src="slide.front_page" @click="navigateToMovie(slide.film_id)">
                     </template>
                 </slide>
             </carousel-3d>
@@ -38,7 +38,7 @@
                     <template slot-scope="{ index, isCurrent, leftIndex, rightIndex }">
                         <img :data-index="index"
                             :class="{ current: isCurrent, onLeft: (leftIndex >= 0), onRight: (rightIndex >= 0) }"
-                            :src="slide.front_page">
+                            :src="slide.front_page" @click="navigateToMovie(slide.film_id)">
                     </template>
                 </slide>
             </carousel-3d>
@@ -185,6 +185,11 @@ export default {
             ],
         }
     },
+    methods: {
+        navigateToMovie(filmId) {
+            this.$router.push({ name: 'MovieView', params: { id: filmId } });
+        }
+    }
 }
 </script>
 
