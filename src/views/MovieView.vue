@@ -1,9 +1,6 @@
 <template>
   <div class="movie-container">
-    <div
-      class="movie-banner"
-      :style="{ backgroundImage: 'url(' + movie.front_page + ')' }"
-    >
+    <div class="movie-banner" :style="{ backgroundImage: 'url(' + movie.front_page + ')' }">
       <div class="overlay"></div>
       <div class="overlay-gradient"></div>
     </div>
@@ -13,61 +10,32 @@
         <p id="detail">2006 · Ciencia Ficción · {{ movie.length }} min</p>
         <p style="width: 700px"><strong></strong> {{ movie.description }}</p>
         <button @click="goBack" class="play-button">
-          <b-icon
-            icon="play-fill
-"
-            font-scale="1.3"
-          ></b-icon>
+          <b-icon icon="play-fill
+" font-scale="1.3"></b-icon>
           Reproducir
         </button>
         <button @click="goBack" class="trailer-button">
           Tráiler
         </button>
         <button @click="goBack" class="favorite-button">
-          <b-icon
-            icon="star
-"
-            font-scale="1.3"
-          ></b-icon>
+          <b-icon icon="star
+" font-scale="1.3"></b-icon>
         </button>
       </div>
       <div class="Suggested" style="margin-top: 200px">
         <h2>Sugerencias</h2>
         <hr class="divider" style="margin-top: 0px" />
         <div class="suggested">
-          <carousel-3d
-            :width="250"
-            :height="130"
-            :display="7"
-            :controls-visible="true"
-            :controls-prev-html="'❮'"
-            :controls-next-html="'❯'"
-            :autoplay="true"
-            :autoplay-timeout="5000"
-            :autoplay-hover-pause="true"
-            :border="0"
-            :disable3d="true"
-            :space="265"
-          >
-            <slide
-              v-for="(slide, i) in suggested"
-              :index="i"
-              :key="i"
-              class="slide_suggested"
-            >
-              <template
-                slot-scope="{ index, isCurrent, leftIndex, rightIndex }"
-              >
-                <img
-                  :data-index="index"
-                  :class="{
-                    current: isCurrent,
-                    onLeft: leftIndex >= 0,
-                    onRight: rightIndex >= 0,
-                  }"
-                  :src="slide.front_page"
-                  @click="navigateToMovie(slide.film_id)"
-                />
+          <carousel-3d :width="250" :height="150" :display="7" :controls-visible="true" :controls-prev-html="'❮'"
+            :controls-next-html="'❯'" :autoplay="true" :autoplay-timeout="5000" :autoplay-hover-pause="true" :border="0"
+            :disable3d="true" :space="265">
+            <slide v-for="(slide, i) in suggested" :index="i" :key="i" class="slide_category">
+              <template slot-scope="{ index, isCurrent, leftIndex, rightIndex }">
+                <img :data-index="index" :class="{
+                  current: isCurrent,
+                  onLeft: leftIndex >= 0,
+                  onRight: rightIndex >= 0,
+                }" :src="slide.front_page" @click="navigateToMovie(slide.film_id)" />
               </template>
             </slide>
           </carousel-3d>
@@ -75,33 +43,49 @@
         </div>
       </div>
       <div>
-    <div class="tabs" fill>
-      <button @click="currentTab = 'tab1'" :class="{ 'active': currentTab === 'tab1' }">Opciones</button>
-      <button @click="currentTab = 'tab2'" :class="{ 'active': currentTab === 'tab2' }" >Detalles</button>
-    </div>
-    <hr class="divider" style="margin-top: 0px" />
-    <div v-if="currentTab === 'tab1'">
-      <h3>Mi calificación</h3>
-      <div class="rating">
-    <span
-      v-for="(star, index) in stars"
-      :key="index"
-      @mouseover="hoverRating(index + 1)"
-      @click="setRating(index + 1)"
-      @mouseleave="resetRating()"
-      :class="{ 'filled': index < currentRating }"
-      class="star"
-    >
-      &#9733;
-    </span>
-    <p>{{ currentRating }} de 5 estrellas</p>
-  </div>    </div>
+        <div class="tabs" fill>
+          <h2>Calificaciones</h2>
+        </div>
+        <hr class="divider" style="margin-top: 0px" />
+        <div>
+          <h3>Mi calificación</h3>
+          <div class="rating">
+            <span v-for="(star, index) in stars" :key="index" @mouseover="hoverRating(index + 1)"
+              @click="setRating(index + 1)" @mouseleave="resetRating()" :class="{ 'filled': index < currentRating }"
+              class="star">
+              &#9733;
+            </span>
+            <p>{{ currentRating }} de 5 estrellas</p>
 
-    <div v-if="currentTab === 'tab2'">
-      <h2>Contenido de la pestaña 2</h2>
-      <p>Este es el contenido de la pestaña 2.</p>
-    </div>
-  </div>
+            <div class="container">
+              <div class="row">
+                <div class="col-12 col-md-6 mb-4" v-for="comment in listComments" :key="comment.fk_user">
+                  <b-card class=" text-white" style="background-color: rgba(51, 51, 51, 0.7); border: none;">
+                    <b-card-text>
+                      <div class="row align-items-center">
+                        <div class="col-md-8">
+                          <strong>User: </strong>{{ comment.rateing_id }}
+                        </div>
+                        <div class="col-md-4 d-flex justify-content-end">
+                          <span v-for="n in 5" :key="n" style="color: gold;">
+                            <b-icon :icon="n <= comment.grade ? 'star-fill' : 'star'" />
+                          </span>
+                        </div>
+                      </div>
+                      <div style="font-size: large; margin: 10px;">
+                        {{ comment.comment }}
+                      </div>
+                    </b-card-text>
+                  </b-card>
+                </div>
+              </div>
+            </div>
+
+
+
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 </template>
@@ -110,10 +94,9 @@
 export default {
   data() {
     return {
-        currentRating: 0,
-        stars: [1, 2, 3, 4, 5],
+      currentRating: 0,
+      stars: [1, 2, 3, 4, 5],
       movie: {},
-      currentTab: 'tab1' ,
       suggested: [
         {
           film_id: "00112233445566778899aabbccddeeff",
@@ -206,6 +189,43 @@ export default {
           file: "http://example.com/files/underwater_odyssey.mp4",
         },
       ],
+      listComments: [
+        {
+          "rateing_id": "e8b08f9b50b141c7b3a30720a2a5b7a1",
+          "grade": 4.5,
+          "comment": "¡Gran película, realmente la disfruté!",
+          "fk_user": "12c1af3b91e14184a4a8cfc2b89f1ed9",
+          "fk_film": "53c2ff1b61e14523b9e7b762d6d9a8f1"
+        },
+        {
+          "rateing_id": "d4c4f9bb90e7417cb2c62d22a4b4b3d3",
+          "grade": 3.2,
+          "comment": "Estuvo bien, podría haber sido mejor.",
+          "fk_user": "a6b2df4e83d84283a4a5b0b1c4f2d4c7",
+          "fk_film": "74d3ee2c53d84523b8d9c7d7e6e1a9e2"
+        },
+        {
+          "rateing_id": "f1a3d8e9c1b44172a4e7d7b4c3a5b6a7",
+          "grade": 5.0,
+          "comment": "¡Absolutamente fantástica! Imprescindible.",
+          "fk_user": "b3e2d9f4a1c94163a5d7b7d7d6d2b1f3",
+          "fk_film": "e4a2b9d1f3e64528b8a7c7f7d6d1e2a3"
+        },
+        {
+          "rateing_id": "a2e3f4d5c1b2417eb8a6b2b1c4d3d4e5",
+          "grade": 2.8,
+          "comment": "No es mi estilo.",
+          "fk_user": "c2b1d7f4e3a84175a4d2b2c3d4e3f1b2",
+          "fk_film": "d3c2e4b5a1f74268b6c7d7f7d6e2e3c1"
+        },
+        {
+          "rateing_id": "c5d4e2a1b4c74179b3d6b2a1e3f2d4a5",
+          "grade": 4.0,
+          "comment": "Muy entretenida y bien hecha.",
+          "fk_user": "d1e2c3f4b3a74167a5d2c3e4d1f3a2b3",
+          "fk_film": "c6b5d7e3a2e84769b5d6e7f7d6d1c2b4"
+        }
+      ]
     };
   },
   created() {
@@ -317,7 +337,7 @@ export default {
             "https://arteycultura.com.mx/wp-content/uploads/2014/11/interestelar.jpg",
           file: "http://example.com/files/underwater_odyssey.mp4",
         },
-        
+
       ];
       this.movie = movies.find((movie) => movie.film_id === filmId) || {};
     },
@@ -372,12 +392,14 @@ export default {
   pointer-events: none;
   transition: opacity 0.1s ease;
 }
+
 #detail {
   margin: 5px 0;
   line-height: 1.5;
   font-size: 0.9em;
   color: #808080;
 }
+
 .movie-details {
   position: relative;
   z-index: 1;
@@ -416,6 +438,7 @@ export default {
   background: #061527;
   color: #ffffff;
 }
+
 .trailer-button {
   display: inline-block;
   padding: 13px 30px;
@@ -436,6 +459,7 @@ export default {
   background: rgba(255, 255, 255, 0.576);
   color: #ffffff;
 }
+
 .favorite-button {
   display: inline-block;
   padding: 13px 30px;
@@ -456,44 +480,36 @@ export default {
   background: rgba(255, 255, 255, 0.576);
   color: #ffffff;
 }
+
 .overlay-gradient {
   position: absolute;
   bottom: 0;
   left: 0;
   width: 100%;
   height: 100%;
-  background: linear-gradient(
-    to top right,
-    rgb(0, 0, 0),
-    rgba(0, 0, 0, 0.141) 80%
-  );
+  background: linear-gradient(to top right,
+      rgb(0, 0, 0),
+      rgba(0, 0, 0, 0.141) 80%);
   pointer-events: none;
 }
+
 .slide {
   display: flex;
 }
+
 .slide_category {
   display: flex;
   border-radius: 15px;
 }
+
 .tabs {
-  display: flex;
-  justify-content: center;
+  /* display: flex;
+  justify-content: center; */
   margin-bottom: 10px;
 }
 
-.tabs button {
-  background-color: #f2f2f200;
-  border: 0px;
-  color: #fff;
-  padding: 10px 20px;
-  cursor:auto;
-}
-
-.tabs button.active {
-  background-color: rgba(221, 221, 221, 0.025);
-}
 .rating {
+  width: 100%;
   display: inline-block;
   font-size: 24px;
 }
@@ -505,6 +521,6 @@ export default {
 }
 
 .star.filled {
-  color: orange; 
+  color: orange;
 }
 </style>
