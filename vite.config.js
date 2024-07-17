@@ -1,10 +1,9 @@
-import { fileURLToPath, URL } from 'node:url'
+import { defineConfig } from 'vite';
+import vue2 from '@vitejs/plugin-vue2';
+import legacy from '@vitejs/plugin-legacy';
+import { createProxyMiddleware as createProxy } from 'http-proxy-middleware';
+import path from 'path'; // Importa el módulo 'path'
 
-import { defineConfig } from 'vite'
-import legacy from '@vitejs/plugin-legacy'
-import vue2 from '@vitejs/plugin-vue2'
-
-// https://vitejs.dev/config/
 export default defineConfig({
   plugins: [
     vue2(),
@@ -13,9 +12,18 @@ export default defineConfig({
       additionalLegacyPolyfills: ['regenerator-runtime/runtime']
     })
   ],
+  server: {
+    proxy: {
+      '/Prod': {
+        target: 'https://3ebxnyhhp1.execute-api.us-east-1.amazonaws.com',
+        changeOrigin: true,
+        rewrite: path => path.replace(/^\/Prod/, '/Prod'),
+      },
+    },
+  },
   resolve: {
     alias: {
-      '@': fileURLToPath(new URL('./src', import.meta.url))
-    }
-  }
-})
+      '@': path.resolve(__dirname, 'src'), // Usa 'path.resolve' correctamente
+    },
+  },
+});

@@ -15,8 +15,8 @@
 
       <b-collapse id="nav-collapse" is-nav>
           <b-navbar-nav class="mx-auto">
-              <b-nav-item :to="{ name: 'home' }" @click="selectOption('home')"
-                  :class="{ 'active': selectedOption === 'home' }">Inicio</b-nav-item>
+              <b-nav-item :to="{ name: 'homeAdmin' }" @click="selectOption('homeAdmin')"
+                  :class="{ 'active': selectedOption === 'homeAdmin' }">Inicio</b-nav-item>
               <b-nav-item :to="{ name: 'movies' }" @click="selectOption('movies')"
                   :class="{ 'active': selectedOption === 'movies' }">Películas</b-nav-item>
               <b-nav-item :to="{ name: 'categories' }" @click="selectOption('categories')"

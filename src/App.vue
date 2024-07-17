@@ -1,11 +1,7 @@
-<script setup>
-</script>
-
-<template>
-  <div id="app">
-    
-
-
-    <router-view />
-  </div>
-</template>
+    <template>
+    <b-container fluid>
+            <b-row>
+                <router-view></router-view>
+            </b-row>
+        </b-container>
+    </template>

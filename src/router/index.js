@@ -14,14 +14,22 @@ const routes = [
     component: () => import("../views/auth/AccessDenied.vue"),
   },
   {
-    path: "*",
-    component: () => import("../views/auth/Error404.vue"),
-  },
-  {
     path: "/admin",
     component: () => import("../views/NavbarNavegation/NavbarAdmin.vue"),
-    meta: { requiresAuth: true, roles: ['ADMIN'] },
+    meta: { requiresAuth: true, roles: ['admin'] },
     children: [
+      {
+        path: "",
+        name: "homeAdmin",
+        component: () => import("../views/admin/HomeAdmin.vue"),
+        meta: { requiresAuth: true, roles: ['admin'] },
+      },
+      {
+        path: "rateing",
+        name: "rateing",
+        component: () => import("../views/admin/RateingAdmin.vue"),
+        meta: { requiresAuth: true, roles: ['admin'] },
+      },
       {
         path: "categories",
         name: "categories",
@@ -31,49 +39,56 @@ const routes = [
         path: "profile-admin",
         name: "profile-admin",
         component: () => import("../views/admin/ProfileAdmin.vue"),
+        meta: { requiresAuth: true, roles: ['admin'] },
       },
       {
         path: "movies",
         name: "movies",
         component: () => import("../views/admin/Movies.vue"),
+        meta: { requiresAuth: true, roles: ['admin'] },
       },
     ],
-  },  
+  },
   {
     path: "/client",
     component: () => import("../views/NavbarNavegation/NavbarUser.vue"),
-    meta: { requiresAuth: true, roles: ['CLIENT'] },
+    meta: { requiresAuth: true, roles: ['cliente'] },
     children: [
       {
         path: "",
         name: "home",
         component: () => import("../views/User/HomeView.vue"),
+        meta: { requiresAuth: true, roles: ['cliente'] },
       },
       {
         path: "movie/:id",
         name: "movie-view",
         component: () => import("../views/User/MovieView.vue"),
+        meta: { requiresAuth: true, roles: ['cliente'] },
       },
       {
         path: "profile",
         name: "profile",
         component: () => import("../views/User/ProfileView.vue"),
+        meta: { requiresAuth: true, roles: ['cliente'] },
       },
       {
         path: "search",
         name: "search",
         component: () => import("../views/User/SearchMovie.vue"),
+        meta: { requiresAuth: true, roles: ['cliente'] },
       },
       {
         path: "favorite",
         name: "favorite",
         component: () => import("../views/User/Favorite.vue"),
+        meta: { requiresAuth: true, roles: ['cliente'] },
       },
     ],
-  },  
+  },
   {
     path: "/",
-    component: () => import("../views/NavbarNavegation/Navbar.vue"),  
+    component: () => import("../views/NavbarNavegation/Navbar.vue"),
     children: [
       {
         path: "/landing",
@@ -92,11 +107,15 @@ const routes = [
       },
     ],
   },
+  {
+    path: "*",
+    component: () => import("../views/auth/Error404.vue"),
+  },
 ];
 
-const router = new VueRouter({ 
+const router = new VueRouter({
   routes,
-  mode: 'history' 
+  mode: 'history'
 });
 
 router.beforeEach((to, from, next) => {
@@ -118,10 +137,7 @@ router.beforeEach((to, from, next) => {
   if (requiresAuth && user) {
     const userRole = user.user.rol.nrol;
     const requiredRoles = to.meta.roles || [];
-
     console.log(`Rol del Usuario: ${userRole}`);
-    console.log(`Roles Requeridos para la ruta: ${requiredRoles.length > 0 ? requiredRoles.join(", ") : "Ninguno"}`);
-
     if (requiredRoles.length > 0 && !requiredRoles.includes(userRole)) {
       next({ name: "unauthorized" });
       return;
@@ -130,6 +146,5 @@ router.beforeEach((to, from, next) => {
 
   next();
 });
-
 
 export default router;
