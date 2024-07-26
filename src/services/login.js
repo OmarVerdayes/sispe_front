@@ -8,8 +8,7 @@ class AuthService {
       .post(`${API_URL}/login`, {
         email: user.email,
         password: user.password,
-      })
-      .then(response => {
+      }).then(response => {
         if (response.data.token) {
           localStorage.setItem('user', JSON.stringify(response.data));
         }
@@ -18,11 +17,16 @@ class AuthService {
   }
 
   logout() {
-    localStorage.removeItem('user');
+    localStorage.removeItem('authUser');
   }
 
   getCurrentUser() {
-    return JSON.parse(localStorage.getItem('user'));
+    return JSON.parse(localStorage.getItem('authUser'));
+  }
+
+  getIdToken() {
+    const user = this.getCurrentUser();
+    return user ? user.id_token : null;
   }
 }
 

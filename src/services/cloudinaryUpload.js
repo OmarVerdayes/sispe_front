@@ -11,7 +11,7 @@ const cloudinaryConfig = {
   
       const uploadUrl = file.type.startsWith('image/') 
         ? `https://api.cloudinary.com/v1_1/${cloudinaryConfig.cloud_name}/image/upload` 
-        : `https://api.cloudinary.com/v1_1/${cloudinaryConfig.cloud_name}/video/upload`;
+        : `https://api.cloudinary.com/v1_1/${cloudinaryConfig.cloud_name}/q/upload`;
   
       const response = await fetch(uploadUrl, {
         method: 'POST',

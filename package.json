@@ -10,6 +10,8 @@
     "axios": "^1.7.2",
     "bootstrap": "^5.3.3",
     "bootstrap-vue": "^2.23.1",
+    "cloudinary": "^2.3.0",
+    "cloudinary-core": "^2.13.1",
     "sweetalert2": "^11.12.2",
     "vue": "^2.7.16",
     "vue-carousel-3d": "^1.0.1",

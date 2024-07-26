@@ -54,7 +54,7 @@
     color: white;
     text-decoration: none;
     border-radius: 5px;
-    transition: background-color 0.3s;
+    transition: background-color 1.9s;
   }
   
   .button:hover {

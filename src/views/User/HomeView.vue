@@ -10,9 +10,8 @@
   :arrows-outside="false"
         >
           <vueper-slide
-            v-for="(slide, i) in dataCarouselCategory"
+            v-for="(slide, i) in dataCarousel"
             :key="i"
-            :title="slide.title"
             :image="slide.front_page"
           >
           </vueper-slide>

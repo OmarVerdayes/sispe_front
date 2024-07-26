@@ -68,11 +68,13 @@ export default {
   try {
     const response = await AuthService.login(this.form);
 
-    if (response && response.role) {
-      const { role } = response;
-      console.log('Role:', role);
+    if (response && response.id_token && response.role) {
+      const { id_token, role } = response;
 
-      localStorage.setItem("authUser", JSON.stringify({ user: { rol: { nrol: role } } }));
+      localStorage.setItem("authUser", JSON.stringify({
+        id_token,
+        user: { rol: { nrol: role } }
+      }));
 
       if (role === 'admin') {
         this.$nextTick(() => {
@@ -90,11 +92,11 @@ export default {
         });
       }
     } else {
-      console.error('No se pudo obtener el rol del usuario. Respuesta del servidor incorrecta.', response);
+      console.error('No se pudo obtener id_token o rol del usuario. Respuesta del servidor incorrecta.', response);
       Swal.fire({
         icon: 'error',
         title: 'Error de inicio de sesión',
-        text: 'No se pudo obtener el rol del usuario. Respuesta del servidor incorrecta.',
+        text: 'No se pudo obtener id_token o rol del usuario. Respuesta del servidor incorrecta.',
       });
     }
   } catch (error) {
@@ -106,10 +108,6 @@ export default {
     });
   }
 }
-
-
-
-
 ,
     onReset(event) {
       event.preventDefault();
