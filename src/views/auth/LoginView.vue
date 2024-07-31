@@ -64,18 +64,23 @@ export default {
       this.showPassword = !this.showPassword;
     },
     async onSubmit(event) {
-  event.preventDefault();
-  try {
-    const response = await AuthService.login(this.form);
+      event.preventDefault();
+      try {
+        const response = await AuthService.login(this.form);
+        
+        if (response && response.id_token && response.role) {
+          const user = await AuthService.getUserByEmail(this.form.email);
+          const { id_token, role } = response;
 
-    if (response && response.id_token && response.role) {
-      const { id_token, role } = response;
+          if (user && user.user_id) {
+            localStorage.setItem("authUser", JSON.stringify({
+              id_token,
+              user: {rol: { nrol: role },
+                id: user.user_id,
+              }
+            }));
 
-      localStorage.setItem("authUser", JSON.stringify({
-        id_token,
-        user: { rol: { nrol: role } }
-      }));
-
+            
       if (role === 'admin') {
         this.$nextTick(() => {
           this.$router.push('/admin');
@@ -84,31 +89,37 @@ export default {
         this.$nextTick(() => {
           this.$router.push('/client');
         });
-      } else {
+            } else {
+              Swal.fire({
+                icon: 'error',
+                title: 'Error de inicio de sesión',
+                text: 'Rol desconocido. Contacte al administrador.',
+              });
+            }
+          } else {
+            Swal.fire({
+              icon: 'error',
+              title: 'Error de inicio de sesión',
+              text: 'No se pudo encontrar el usuario por el correo electrónico.',
+            });
+          }
+        } else {
+          console.error('No se pudo obtener id_token del usuario. Respuesta del servidor incorrecta.', loginResponse);
+          Swal.fire({
+            icon: 'error',
+            title: 'Error de inicio de sesión',
+            text: 'No se pudo obtener id_token del usuario. Respuesta del servidor incorrecta.',
+          });
+        }
+      } catch (error) {
+        console.error('Error durante el inicio de sesión:', error);
         Swal.fire({
           icon: 'error',
           title: 'Error de inicio de sesión',
-          text: 'Rol desconocido. Contacte al administrador.',
+          text: 'Inicio de sesión fallido. Verifique sus credenciales e intente nuevamente.',
         });
       }
-    } else {
-      console.error('No se pudo obtener id_token o rol del usuario. Respuesta del servidor incorrecta.', response);
-      Swal.fire({
-        icon: 'error',
-        title: 'Error de inicio de sesión',
-        text: 'No se pudo obtener id_token o rol del usuario. Respuesta del servidor incorrecta.',
-      });
-    }
-  } catch (error) {
-    console.error('Error durante el inicio de sesión:', error);
-    Swal.fire({
-      icon: 'error',
-      title: 'Error de inicio de sesión',
-      text: 'Inicio de sesión fallido. Verifique sus credenciales e intente nuevamente.',
-    });
-  }
-}
-,
+    },
     onReset(event) {
       event.preventDefault();
       this.form.email = '';
@@ -117,7 +128,6 @@ export default {
   }
 }
 </script>
-
 
 <style scoped>
 @import 'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css';
