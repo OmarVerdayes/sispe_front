@@ -57,11 +57,9 @@
 
             <div class="container">
               <div class="row">
-                <!-- Mostrar mensaje si listComments está vacío -->
                 <div v-if="listComments.length === 0" class="col-12">
                   <p>No hay opiniones para esta película, ¡sé el primero en opinar!</p>
                 </div>
-                <!-- Mostrar comentarios si listComments tiene datos -->
                 <div v-else class="col-12 col-md-6 mb-4" v-for="comment in listComments" :key="comment.fk_user">
                   <b-card class="text-white" style="background-color: rgba(51, 51, 51, 0.7); border: none;">
                     <b-card-text>
@@ -143,7 +141,7 @@ export default {
       try {
         const commentsResponse = await axios.get(`https://1yasnjn821.execute-api.us-east-1.amazonaws.com/Prod/get_rateing_by_film_id/${filmId}`);
         if (commentsResponse.data === "No rateings found for the given film") {
-          this.listComments = []; // No hay comentarios
+          this.listComments = [];
         } else {
           this.listComments = commentsResponse.data;
         }

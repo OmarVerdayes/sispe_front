@@ -1,7 +1,7 @@
 <template>
-  <div>
+  <div class="main-container">
     <h1>Registro de Películas</h1>
-    <form @submit.prevent="submitForm">
+    <form @submit.prevent="submitForm" class="movie-form">
       <label for="title">Título:</label>
       <input type="text" id="title" v-model="movie.title" required>
       
@@ -36,6 +36,7 @@
 <script>
 import { createMovie } from '../../services/movie';
 import { fetchCategories } from '../../services/categories';
+import Swal from 'sweetalert2';
 
 export default {
   data() {
@@ -60,13 +61,28 @@ export default {
       try {
         const createdMovie = await createMovie(this.movie);
         if (createdMovie) {
-          console.log('Película registrada exitosamente:', createdMovie);
+          Swal.fire({
+            title: 'Éxito',
+            text: 'Película registrada exitosamente.',
+            icon: 'success',
+            confirmButtonText: 'Aceptar'
+          });
           this.resetForm();
         } else {
-          console.error('No se pudo registrar la película.');
+          Swal.fire({
+            title: 'Error',
+            text: 'No se pudo registrar la película.',
+            icon: 'error',
+            confirmButtonText: 'Aceptar'
+          });
         }
       } catch (error) {
-        console.error('Error al registrar la película:', error);
+        Swal.fire({
+          title: 'Error',
+          text: `Error al registrar la película: ${error.message}`,
+          icon: 'error',
+          confirmButtonText: 'Aceptar'
+        });
       }
     },
     resetForm() {
@@ -86,8 +102,58 @@ export default {
     }
   }
 };
- 
 </script>
 
-<style>
+<style scoped>
+.main-container {
+  background: #00050d;
+  color: white;
+  padding: 40px;
+  max-width: 600px;
+  margin: 0 auto;
+  border-radius: 10px;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+  font-family: Arial, sans-serif;
+}
+
+h1 {
+  text-align: center;
+  margin-bottom: 20px;
+  font-size: 24px;
+}
+
+.movie-form {
+  display: flex;
+  flex-direction: column;
+}
+
+.movie-form label {
+  margin-bottom: 10px;
+  font-weight: bold;
+}
+
+.movie-form input,
+.movie-form textarea,
+.movie-form select {
+  margin-bottom: 20px;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  font-size: 16px;
+}
+
+.movie-form button {
+  padding: 10px;
+  border: none;
+  border-radius: 5px;
+  background-color: #1e90ff;
+  color: white;
+  font-size: 18px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.movie-form button:hover {
+  background-color: #1c86ee;
+}
 </style>
