@@ -75,20 +75,21 @@ export default {
           if (user && user.user_id) {
             localStorage.setItem("authUser", JSON.stringify({
               id_token,
-              user: {rol: { nrol: role },
+              user: {
+                rol: { nrol: role },
                 id: user.user_id,
+                email: user.email
               }
             }));
 
-            
-      if (role === 'admin') {
-        this.$nextTick(() => {
-          this.$router.push('/admin');
-        });
-      } else if (role === 'cliente') {
-        this.$nextTick(() => {
-          this.$router.push('/client');
-        });
+            if (role === 'admin') {
+              this.$nextTick(() => {
+                this.$router.push('/admin');
+              });
+            } else if (role === 'cliente') {
+              this.$nextTick(() => {
+                this.$router.push('/client');
+              });
             } else {
               Swal.fire({
                 icon: 'error',
@@ -104,7 +105,7 @@ export default {
             });
           }
         } else {
-          console.error('No se pudo obtener id_token del usuario. Respuesta del servidor incorrecta.', loginResponse);
+          console.error('No se pudo obtener id_token del usuario. Respuesta del servidor incorrecta.', response);
           Swal.fire({
             icon: 'error',
             title: 'Error de inicio de sesión',
@@ -128,21 +129,33 @@ export default {
   }
 }
 </script>
-
 <style scoped>
 @import 'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css';
+
+html, body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  width: 100%;
+  overflow: hidden; 
+}
+
+*, *::before, *::after {
+  box-sizing: border-box;
+}
 
 .main-container {
   background-image: url('/4.png');
   background-size: cover;
   background-position: center;
   width: 100vw;
-  height: 100vh;
+  height: 103.8vh;
   display: flex;
   justify-content: center;
   align-items: center;
   position: relative;
   z-index: 0;
+  overflow: hidden; 
 }
 
 .login-container {

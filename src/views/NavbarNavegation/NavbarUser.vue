@@ -51,6 +51,7 @@
     background-color: #00050D;
     padding-top: 10px;
     width: 100%;
+    z-index: 9999; 
   }
   
   .navbar-nav .nav-item.active {

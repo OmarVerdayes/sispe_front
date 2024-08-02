@@ -47,7 +47,29 @@
         <hr class="divider" style="margin-top: 0px" />
         <div>
           <h3>Mi calificación</h3>
-          <div class="rating">
+          <div v-if="myComment" class="rating">
+            <b-card class="text-white" style="background-color: rgba(51, 51, 51, 0.7); border: none; max-width: 50%;"
+              v-if="myComment">
+              <b-card-text>
+                <div class="row align-items-center">
+                  <div class="col-md-9">
+                    <strong>User: </strong>{{ myComment.email }}
+                  </div>
+                  <div class="col-md-3 d-flex justify-content-end">
+                    <span v-for="n in 5" :key="n" style="color: gold;">
+                      <b-icon :icon="n <= myComment.grade ? 'star-fill' : 'star'" />
+                    </span>
+                  </div>
+                </div>
+                <div style="font-size: large; margin: 10px;">
+                  {{ myComment.comment }}
+                </div>
+              </b-card-text>
+            </b-card>
+
+          </div>
+          <div v-else class="rating">
+            <!-- Mostrar el formulario de calificación si myComment es null -->
             <span v-for="(star, index) in stars" :key="index" @mouseover="hoverRating(index + 1)"
               @click="setRating(index + 1)" @mouseleave="resetRating()" :class="{ 'filled': index < currentRating }"
               class="star">
@@ -55,30 +77,34 @@
             </span>
             <p>{{ currentRating }} de 5 estrellas</p>
 
-            <div class="container">
-              <div class="row">
-                <div v-if="listComments.length === 0" class="col-12">
-                  <p>No hay opiniones para esta película, ¡sé el primero en opinar!</p>
-                </div>
-                <div v-else class="col-12 col-md-6 mb-4" v-for="comment in listComments" :key="comment.fk_user">
-                  <b-card class="text-white" style="background-color: rgba(51, 51, 51, 0.7); border: none;">
-                    <b-card-text>
-                      <div class="row align-items-center">
-                        <div class="col-md-8">
-                          <strong>User: </strong>{{ comment.email }}
-                        </div>
-                        <div class="col-md-4 d-flex justify-content-end">
-                          <span v-for="n in 5" :key="n" style="color: gold;">
-                            <b-icon :icon="n <= comment.grade ? 'star-fill' : 'star'" />
-                          </span>
-                        </div>
+            <div class="form-group">
+              <textarea v-model="userComment" placeholder="Escribe tu comentario aquí..." class="textarea"></textarea>
+            </div>
+            <button @click="submitComment" class="btn btn-primary">Enviar comentario</button>
+          </div>
+          <div class="container">
+            <div class="row">
+              <div v-if="listComments.length === 0 && myComment===null" class="col-12">
+                <p>No hay opiniones para esta película, ¡sé el primero en opinar!</p>
+              </div>
+              <div v-else class="col-12 col-md-6 mb-4" v-for="comment in listComments" :key="comment.fk_user">
+                <b-card class="text-white" style="background-color: rgba(51, 51, 51, 0.7); border: none;">
+                  <b-card-text>
+                    <div class="row align-items-center">
+                      <div class="col-md-8">
+                        <strong>User: </strong>{{ comment.email }}
                       </div>
-                      <div style="font-size: large; margin: 10px;">
-                        {{ comment.comment }}
+                      <div class="col-md-4 d-flex justify-content-end">
+                        <span v-for="n in 5" :key="n" style="color: gold;">
+                          <b-icon :icon="n <= comment.grade ? 'star-fill' : 'star'" />
+                        </span>
                       </div>
-                    </b-card-text>
-                  </b-card>
-                </div>
+                    </div>
+                    <div style="font-size: large; margin: 10px;">
+                      {{ comment.comment }}
+                    </div>
+                  </b-card-text>
+                </b-card>
               </div>
             </div>
           </div>
@@ -95,10 +121,16 @@ export default {
   data() {
     return {
       currentRating: 0,
+      originalRating: 0, // Almacena la calificación original
       stars: [1, 2, 3, 4, 5],
       movie: {},
       suggested: [],
-      listComments: []
+      listComments: [],
+      userComment: '',
+      id_film: '',
+      userId: null,
+      myEmail: null,
+      myComment: null
     };
   },
   created() {
@@ -106,18 +138,40 @@ export default {
   },
   methods: {
     hoverRating(rating) {
+      this.originalRating = this.currentRating; // Guarda la calificación original
       this.currentRating = rating;
     },
     resetRating() {
-      if (this.currentRating === 0) return;
-      this.currentRating = 0;
+      // Solo restablecer la calificación a la original cuando no esté seleccionada
+      if (this.currentRating !== 0) return;
+      this.currentRating = this.originalRating; // Restablece a la calificación original
     },
     setRating(rating) {
       this.currentRating = rating;
-      this.$emit('rated', rating);
+      console.log('Calificación seleccionada:', this.currentRating); // Verificar si se actualiza correctamente
     },
     async loadMovie() {
       const filmId = this.$route.params.id;
+      this.id_film = filmId;
+
+      const authUser = JSON.parse(localStorage.getItem('authUser'));
+      this.userId = authUser.user ? authUser.user.id.toUpperCase() : null;
+      this.myEmail = authUser.user ? authUser.user.email : null;
+
+      try {
+        const commentsResponse = await axios.get(`https://1yasnjn821.execute-api.us-east-1.amazonaws.com/Prod/get_rateing_by_film_id/${filmId}`);
+        if (commentsResponse.data === "No rateings found for the given film") {
+          this.listComments = [];
+        } else {
+          this.myComment = commentsResponse.data.find((comment) => comment.email === this.myEmail) || null;
+
+          this.listComments = commentsResponse.data.filter((comment) => comment.email !== this.myEmail);
+          //this.listComments = commentsResponse.data;
+        }
+      } catch (error) {
+        console.error('Error al cargar los rateings:', error);
+      }
+
 
       try {
         const response = await axios.get(`https://djpg1wqrj2.execute-api.us-east-1.amazonaws.com/Prod/get_category_films_by_film_id/${filmId}`);
@@ -125,29 +179,13 @@ export default {
 
         this.movie = data.find((movie) => movie.film_id === filmId) || {};
 
-        // Filtrar la película actual para que no esté en la lista sugerida
-        let lista = data.filter(movie => movie.film_id !== filmId);
-
-
         const filteredMovies = data.filter((movieI) => movieI.film_id !== filmId);
         this.suggested = filteredMovies;
-
-        console.log(this.suggested)
-
 
       } catch (error) {
         console.error('Error al cargar la película:', error);
       }
-      try {
-        const commentsResponse = await axios.get(`https://1yasnjn821.execute-api.us-east-1.amazonaws.com/Prod/get_rateing_by_film_id/${filmId}`);
-        if (commentsResponse.data === "No rateings found for the given film") {
-          this.listComments = [];
-        } else {
-          this.listComments = commentsResponse.data;
-        }
-      } catch (error) {
-        console.error('Error al cargar los rateings:', error);
-      }
+
     },
     goBack() {
       this.$router.push({ name: "home" });
@@ -159,6 +197,28 @@ export default {
         overlay.style.opacity = `${Math.min(scrollPosition / 500, 0.8)}`;
       }
     },
+    async submitComment() {
+      if (this.currentRating === 0 || this.userComment.trim() === '') {
+        alert('Por favor, selecciona una calificación y escribe un comentario.');
+        return;
+      }
+
+      if (this.currentRating && this.userComment && this.userId && this.id_film) {
+        const data = {
+          "grade": this.currentRating,
+          "comment": this.userComment,
+          "fk_user": this.userId,
+          "fk_film": this.id_film
+        }
+        try {
+          const response = await axios.post(`https://1yasnjn821.execute-api.us-east-1.amazonaws.com/Prod/rateing/`, data);
+          this.myComment = data;
+          alert('Comentario creado.');
+        } catch (error) {
+          console.log('error al registrar el comentario: ', error);
+        }
+      }
+    }
   },
   mounted() {
     window.scrollTo(0, 0);
@@ -330,5 +390,19 @@ export default {
 
 .star.filled {
   color: orange;
+}
+
+.textarea {
+  width: 50%;
+  max-width: 600px;
+  height: 150px;
+  max-height: 200px;
+  background-color: rgba(0, 0, 0, 0.7);
+  color: white;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  padding: 10px;
+  box-sizing: border-box;
+  resize: none;
 }
 </style>
