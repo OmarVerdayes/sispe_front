@@ -8,24 +8,33 @@
       <button @click="login" class="play-button">Comenzar</button>
     </div>
     <div class="space">
-      <div class="row">
+      <div class="row" style="  background: linear-gradient(to top left,rgba(4, 59, 70, 0.999)1%, rgba(0, 0, 0, 0.855)60%);">
+        <h1 style="  font-family: 'Montserrat', sans-serif; text-align: center;color: white;"><strong>Novedades</strong> </h1>
+        <p style="color:rgb(211, 211, 211); font-size: 18px; text-align: center;">Regístrate hoy y empieza tu aventura cinematográfica. Con SISPE, cada noche puede ser una noche de película.</p>
+        <div class="container">
+          <Motion v-for="(image, index) in images" :key="index" class="box" :hover="{ scale: 1.2 }" :press="{ scale: 0.8 }">
+            <img :src="image" class="image"/>
+          </Motion>
+  </div>
+      </div>
+      <div class="row" style="  background: linear-gradient(to top right,rgba(4, 70, 15, 0.854)1%, rgba(0, 0, 0, 0.855)40%)">
         <div
           class="col"
-          style="margin-top: 100px; margin-left: 100px; color: white; "
+          style="margin-top: 80px; margin-left: 100px; color: white; "
         >
           <h1 style="  font-family: 'Montserrat', sans-serif;"><strong>Explora</strong> </h1>
-          <h2 style="font-size: 30px;  font-family: 'Montserrat', sans-serif; letter-spacing: 1.3px;">
+          <h2 style="font-size: 30px;  font-family: 'Montserrat', sans-serif; ">
             Explora un mundo de entretenimiento a tu alcance. Descubre contenido exclusivo y recomendaciones personalizadas.
           </h2>
         </div>
-        <div class="col">
+        <div class="col" style="margin-left:60px">
           <img
             src="../assets/sispe.gif"
-            width="100%"
+            width="80%"
           />
         </div>
       </div>
-      <div class="row" style="margin-top:0px;">
+      <div class="row" style="  background: linear-gradient(to bottom right,rgba(4, 70, 15, 0.854)1%, rgba(0, 0, 0, 0.855)40%);">        
         <div class="col" style="margin-top: 20px; margin-left: 100px">
           <kinesis-container>
             <kinesis-element :strength="30" type="depth">
@@ -48,9 +57,9 @@
             </div>
           </kinesis-container>
         </div>
-        <div class="col" style="margin-top: 100px; color: white">
-          <h1 style="  font-family: 'Montserrat', sans-serif;"><strong>Próximamente</strong> </h1>
-          <h2 style="  font-family: 'Montserrat', sans-serif;">
+        <div class="col" style="margin-top: 100px; color: white; font-family: 'Montserrat', sans-serif;">
+          <h1><strong>Próximamente</strong> </h1>
+          <h2>
             Anticípate a lo nuevo. Conoce los próximos estrenos y mantente al día con las novedades más esperadas.
           </h2>
         </div>
@@ -109,6 +118,41 @@
     </vueper-slides>
   </div>
 </div>
+<div class="row" style="background: linear-gradient(to right, rgb(15, 138, 89), rgb(71, 175, 204), rgba(66, 63, 225, 0.975)); justify-content:center; align-items: center; height: 100%;">
+    <div class="wrap center" style="text-align: center;">
+        <span class="row-label" style="background-color:#325a99;color:white; font-family: 'Montserrat', sans-serif;letter-spacing: 1.3px; padding: 5px; margin-top: 30px;"><strong>Suscripción Especial</strong></span>
+        <h2 class="row-title" style="color:white;font-size: 50px;"><strong>¡Únete Ahora por Solo 99 Pesos al Mes!</strong></h2>
+        <p style="color:rgb(228, 228, 228); font-size: 18px;">Disfruta de acceso ilimitado a todas nuestras películas y series con nuestra suscripción mensual.</p>
+        
+        <table style="width: 50%; margin: 0 auto; border-collapse: collapse; margin-top: 20px;">
+            <thead>
+                <tr style="background-color: #325a99; color: white;">
+                    <th style="padding: 10px; ">Características</th>
+                    <th style="padding: 10px; ">Detalles</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr style="color: white;">
+                    <td style="padding: 10px; border: 1px solid #ddd; ">Acceso Ilimitado</td>
+                    <td style="padding: 10px; border: 1px solid #ddd;">A todas las películas</td>
+                </tr>
+                <tr style="color: white;">
+                    <td style="padding: 10px; border: 1px solid #ddd;">Sin Anuncios</td>
+                    <td style="padding: 10px; border: 1px solid #ddd;">Disfruta de contenido sin interrupciones.</td>
+                </tr>
+                <tr style="color: white;">
+                    <td style="padding: 10px; border: 1px solid #ddd;">Calidad HD</td>
+                    <td style="padding: 10px; border: 1px solid #ddd;">Mira tus programas favoritos en alta definición.</td>
+                </tr> 
+            </tbody>
+        </table>
+        
+        <button style="margin-top: 20px; padding: 10px 20px; background-color: #325a9974; color: white; border: 1px solid rgba(221, 221, 221, 0.474); font-family: 'Montserrat', sans-serif; font-size: 16px; cursor: pointer;">
+            Suscribirse Ahora
+        </button>
+    </div>
+</div>
+
 <div class="row carousel-container" >
   <div class="carousel-content">
     <h1>CUANDO Y DÓNDE QUIERAS</h1>
@@ -124,6 +168,7 @@
 
 
 <script>
+import { Motion } from '@oku-ui/motion';
 import { KinesisContainer, KinesisElement } from "vue-kinesis";
 import { VueperSlides, VueperSlide } from "vueperslides";
 import "vueperslides/dist/vueperslides.css";
@@ -134,6 +179,7 @@ export default {
     KinesisElement,
     VueperSlides,
     VueperSlide,
+    Motion
   },
   data() {
     return {
@@ -144,7 +190,15 @@ export default {
         { name: 'Infantil' },
         { name: 'Acción' },
         { name: 'Romance' }
-      ]
+      ],
+      images: [
+  'https://www.quepelivemoshoy.com/wp-content/uploads/2020/11/poster-los-vengadores.jpg',
+  'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQkKtIg1niPQzvEVP2y0A_eud0zMCqHEpknBg&s',
+  'https://http2.mlstatic.com/D_NQ_NP_671450-MLM48198252023_112021-O.webp',
+  'https://lumiere-a.akamaihd.net/v1/images/p_rayaandthelastdragon_21294_83346778.jpeg',
+  'https://es.web.img3.acsta.net/img/90/ea/90ea2e07d6c5897672fbd39c73b4d14f.jpg',
+  'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQjaYIXnWodD6NhEDJO8-XzRnH20CiZMrnvpA&s'
+],
     }
   },
   methods: {
@@ -159,13 +213,35 @@ export default {
 * {
   box-sizing: border-box;
 }
+.container {
+  display: flex;
+  gap: 50px;
+}
+.box {
+  border-radius: 25px;
+  width: 170px;
+  height: 200px;
+  overflow: hidden;
+}
+.image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.row:not(:first-child) {
+  border-top: 5px solid rgb(30, 30, 32);
+  padding-top: 20px; 
+}
 
 html,
 body {
   margin: 0;
   padding: 0;
   overflow-x: hidden;
+  overflow: auto; /* Permite el desplazamiento */
+  scrollbar-width: none; 
 }
+
 
 .page-container {
   position: relative;
@@ -215,7 +291,7 @@ body {
 }
 
 .space {
-  background: linear-gradient(to top, #08042e, rgba(0, 0, 0, 0.855)113%);
+  background: linear-gradient(to top, rgb(7, 43, 69), rgba(0, 0, 0, 0.855)60%);
   background-color: #000000;
   padding: 100px 0;
 }

@@ -98,14 +98,10 @@ export default {
   <style>
 .main-container {
   background: #00050d;
-  overflow: hidden;
-  width: 120vw;
+  width: 110vw;
   height: 350vh;
 }
 
-.container {
-  padding: 10px;
-}
 
 .category_div {
   color: #ffffff;

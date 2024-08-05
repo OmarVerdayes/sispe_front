@@ -43,6 +43,9 @@
         this.$router.push({ name: 'login' });
       },
     },
+    mounted() {
+  console.log('NavbarUser component mounted');
+}
   };
   </script>
   

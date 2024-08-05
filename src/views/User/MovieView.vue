@@ -125,7 +125,6 @@ export default {
 
         this.movie = data.find((movie) => movie.film_id === filmId) || {};
 
-        // Filtrar la película actual para que no esté en la lista sugerida
         let lista = data.filter(movie => movie.film_id !== filmId);
 
 
