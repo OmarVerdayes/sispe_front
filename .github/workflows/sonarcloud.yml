@@ -31,4 +31,3 @@ jobs:
           args: >
             -Dsonar.projectKey=OmarVerdayes_sispe_front
             -Dsonar.login=${{ secrets.SONAR_TOKEN }}
-            -Dsonar.exclusions=**/node_modules/**
