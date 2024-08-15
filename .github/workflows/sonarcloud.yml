@@ -30,4 +30,6 @@ jobs:
         with:
           args: >
             -Dsonar.projectKey=OmarVerdayes_sispe_front
+            -Dsonar.organization=OmarVerdayes
+            -Dsonar.host.url=https://sonarcloud.io
             -Dsonar.login=${{ secrets.SONAR_TOKEN }}
