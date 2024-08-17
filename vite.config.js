@@ -7,10 +7,7 @@ import path from 'path'; // Importa el módulo 'path'
 export default defineConfig({
   plugins: [
     vue2(),
-    legacy({
-      targets: ['ie >= 11'],
-      additionalLegacyPolyfills: ['regenerator-runtime/runtime']
-    })
+
   ],
   server: {
     proxy: {
