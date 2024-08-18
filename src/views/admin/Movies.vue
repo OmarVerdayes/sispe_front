@@ -22,8 +22,11 @@
         <option v-for="category in categories" :key="category.category_id" :value="category.category_id">{{ category.name }}</option>
       </select>
       
-      <label for="front_page">Imagen de Portada:</label>
+      <label for="front_page">Imagen de Fondo:</label>
       <input type="file" id="front_page" @change="handleFileUpload($event, 'front_page')" accept="image/*" required>
+
+      <label for="banner">Imagen de Portada:</label>
+      <input type="file" id="banner" @change="handleFileUpload($event, 'banner')" accept="image/*" required>
       
       <label for="file">Archivo de Video:</label>
       <input type="file" id="file" @change="handleFileUpload($event, 'file')" accept="video/*" required>
@@ -48,13 +51,15 @@ export default {
         status: 'Activo',
         fk_category: '',
         front_page: null,
-        file: null
+        file: null,
+        banner: null
       },
       categories: []
     };
   },
   async mounted() {
     this.categories = await fetchCategories();
+    console.log('Categorías cargadas:', this.categories);
   },
   methods: {
     async submitForm() {
@@ -93,7 +98,8 @@ export default {
         status: 'Activo',
         fk_category: '',
         front_page: null,
-        file: null
+        file: null,
+        banner: null
       };
     },
     handleFileUpload(event, type) {
@@ -106,7 +112,7 @@ export default {
 
 <style scoped>
 .main-container {
-  background: #00050d;
+  background: #3a3b3b;
   color: white;
   padding: 40px;
   max-width: 600px;

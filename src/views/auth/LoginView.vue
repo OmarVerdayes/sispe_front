@@ -1,5 +1,8 @@
 <template>
   <div class="main-container">
+    <div v-if="loading" class="loading-overlay">
+      <LoadAnimation />
+    </div>
     <div class="login-container">
       <h4><p>INICIAR SESIÓN</p></h4>
       <b-form @submit="onSubmit" @reset="onReset" v-if="show">
@@ -44,11 +47,16 @@
   </div>
 </template>
 
+
 <script>
 import AuthService from '../../services/login.js';
 import Swal from 'sweetalert2';
+import LoadAnimation from '../load/load.vue'; 
 
 export default {
+  components: {
+    LoadAnimation,
+  },
   data() {
     return {
       form: {
@@ -57,6 +65,7 @@ export default {
       },
       show: true,
       showPassword: false,
+      loading: false,
     }
   },
   methods: {
@@ -65,6 +74,7 @@ export default {
     },
     async onSubmit(event) {
       event.preventDefault();
+      this.loading = true;
       try {
         const response = await AuthService.login(this.form);
         
@@ -83,13 +93,9 @@ export default {
             }));
 
             if (role === 'admin') {
-              this.$nextTick(() => {
-                this.$router.push('/admin');
-              });
+              this.$router.push('/admin');
             } else if (role === 'cliente') {
-              this.$nextTick(() => {
-                this.$router.push('/client');
-              });
+              this.$router.push('/client');
             } else {
               Swal.fire({
                 icon: 'error',
@@ -105,7 +111,6 @@ export default {
             });
           }
         } else {
-          console.error('No se pudo obtener id_token del usuario. Respuesta del servidor incorrecta.', response);
           Swal.fire({
             icon: 'error',
             title: 'Error de inicio de sesión',
@@ -113,12 +118,14 @@ export default {
           });
         }
       } catch (error) {
-        console.error('Error durante el inicio de sesión:', error);
         Swal.fire({
           icon: 'error',
           title: 'Error de inicio de sesión',
           text: 'Inicio de sesión fallido. Verifique sus credenciales e intente nuevamente.',
         });
+      } finally {
+        this.show = true; 
+        this.loading = false;
       }
     },
     onReset(event) {
@@ -129,6 +136,8 @@ export default {
   }
 }
 </script>
+
+
 <style scoped>
 @import 'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css';
 
@@ -143,12 +152,23 @@ html, body {
 *, *::before, *::after {
   box-sizing: border-box;
 }
-
+.loading-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5); 
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+}
 .main-container {
   background-image: url('/4.png');
   background-size: cover;
   background-position: center;
-  width: 100vw;
+  width: 102vw;
   height: 103.8vh;
   display: flex;
   justify-content: center;

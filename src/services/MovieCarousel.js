@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const API_URL = 'https://djpg1wqrj2.execute-api.us-east-1.amazonaws.com/Prod';
+const API_URL = 'https://dld295hsy3.execute-api.us-east-1.amazonaws.com/Prod/';
 
 class FilmService {
   getRandomFilm() {

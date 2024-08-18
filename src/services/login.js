@@ -1,7 +1,7 @@
 import axios from 'axios';
 
-const API_URL = 'https://m97nrc17x0.execute-api.us-east-1.amazonaws.com/Prod';
-const API_USER_URL = `${API_URL}/user/`; // Asegúrate de definir esta constante también.
+const API_URL = 'https://lhgkaf7rki.execute-api.us-east-1.amazonaws.com/Prod/';
+const API_USER_URL = `${API_URL}/user/`; 
 
 class AuthService {
   async login(user) {
@@ -31,7 +31,7 @@ class AuthService {
   }
 
   logout() {
-    localStorage.removeItem('user');
+    localStorage.removeItem('authUser');
   }
 
   getCurrentUser() {

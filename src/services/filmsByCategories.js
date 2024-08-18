@@ -2,7 +2,7 @@ import axios from 'axios';
 
 async function fetchFilms() {
     try {
-        const response = await axios.get('https://djpg1wqrj2.execute-api.us-east-1.amazonaws.com/Prod/films/list');
+        const response = await axios.get('https://dld295hsy3.execute-api.us-east-1.amazonaws.com/Prod/films/category');
         
         const data = response.data;
         

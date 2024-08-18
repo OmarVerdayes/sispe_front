@@ -14,6 +14,12 @@ const routes = [
     component: () => import("../views/auth/AccessDenied.vue"),
   },
   {
+    path: "play/:id",
+    name: "moviePlay",
+    component: () => import("../views/User/MoviePlay.vue"),
+    meta: { requiresAuth: true, roles: ['cliente'] },
+  },
+  {
     path: "/admin",
     component: () => import("../views/NavbarNavegation/NavbarAdmin.vue"),
     meta: { requiresAuth: true, roles: ['admin'] },

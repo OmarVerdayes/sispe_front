@@ -6,7 +6,7 @@
       <div class="movie-row" v-for="(row, index) in paginatedRows" :key="index">
         <div class="movie-card" v-for="movie in row" :key="movie.film_id">
           <div class="movie-image-wrapper">
-            <img :src="movie.front_page" alt="Portada de la película">
+            <img :src="movie.banner" alt="Portada de la película" width="180">
           </div>
           <h2>{{ movie.title }}</h2>
         </div>
@@ -39,9 +39,7 @@ export default {
       } else {
         const query = this.searchQuery.trim().toLowerCase();
         return this.movies.filter(movie =>
-          movie.title.toLowerCase().includes(query) ||
-          movie.description.toLowerCase().includes(query)
-        );
+          movie.title.toLowerCase().includes(query));
       }
     },
     paginatedRows() {
@@ -135,14 +133,6 @@ export default {
   flex-direction: column;
   justify-content: flex-start;
   height: 350px;
-}
-
-.movie-image-wrapper {
-  flex-grow: 1;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  overflow: hidden;
 }
 
 .movie-card img {

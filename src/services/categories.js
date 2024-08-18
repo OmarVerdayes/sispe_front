@@ -8,7 +8,7 @@ export async function fetchCategories() {
     }
   
     try {
-      const response = await fetch('https://8up8rfrgna.execute-api.us-east-1.amazonaws.com/Prod/categoria/', {
+      const response = await fetch('https://vu2ps1ry7c.execute-api.us-east-1.amazonaws.com/Prod/category', {
         method: 'GET',
         headers: {
           'Authorization': `Bearer ${parsedToken}`, 

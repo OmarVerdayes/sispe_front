@@ -5,7 +5,7 @@
     </div>
     <div class="movie-container">
       <div class="movie-card" v-for="movie in movies" :key="movie.film_id">
-        <img :src="movie.front_page" alt="Portada de la película">
+        <img :src="movie.banner" alt="Portada de la película">
         <h2>{{ movie.title }}</h2>
         <h2 style="font-size:16px; color: rgb(75, 75, 75);">{{ movie.length }}</h2><b-icon icon="heart-fill" ></b-icon>
       </div>

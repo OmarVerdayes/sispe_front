@@ -113,7 +113,7 @@
       <vueper-slide
       v-for="(category, i) in categories"
       :key="i"
-        :title="i.toString()"
+      :title="i.toString()"
       />
     </vueper-slides>
   </div>
@@ -238,7 +238,6 @@ body {
   margin: 0;
   padding: 0;
   overflow-x: hidden;
-  overflow: auto; /* Permite el desplazamiento */
   scrollbar-width: none; 
 }
 
@@ -253,7 +252,7 @@ body {
   background-image: url("/2.png");
   background-size: cover;
   background-position: center;
-  width: 100vw;
+  width: 101vw;
   height: 100vh;
   position: relative;
   overflow: hidden;
