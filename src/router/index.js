@@ -100,6 +100,11 @@ const routes = [
         name: "register",
         component: () => import("../views/auth/Create_accountView.vue"),
       },
+      {
+        path: "/change_password",
+        name: "change_password",
+        component: () => import("../views/auth/Change_temporary_password.vue"),
+      },
     ],
   },
   {
