@@ -8,21 +8,28 @@
           <div class="movie-image-wrapper">
             <img :src="movie.banner" alt="Portada de la película" width="180">
           </div>
-          <h2>{{ movie.title }}</h2>
+          <h3>{{ movie.title }}</h3>
         </div>
       </div>
       <div v-if="filteredMovies.length === 0 && !loading">
         <p>No se encontraron películas.</p>
       </div>
-      <p v-if="loading">Cargando...</p>
+    </div>
+
+    <div v-if="loading" class="loading-overlay">
+      <LoadAnimation />
     </div>
   </div>
 </template>
 
 <script>
 import { fetchMovies } from '../../services/movie.js';
+import LoadAnimation from '../load/load.vue'; 
 
 export default {
+  components: {
+    LoadAnimation,
+  },
   data() {
     return {
       movies: [],
@@ -86,7 +93,6 @@ export default {
   }
 };
 </script>
-
 <style scoped>
 .movie-search {
   background-color: #00050D;
@@ -163,5 +169,17 @@ export default {
   .movie-card {
     width: calc(50% - 20px);
   }
+}
+.loading-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
 }
 </style>

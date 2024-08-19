@@ -42,12 +42,6 @@ const routes = [
         component: () => import("../views/admin/ProfileAdmin.vue"),
         meta: { requiresAuth: true, roles: ['admin'] },
       },
-      {
-        path: "movies",
-        name: "movies",
-        component: () => import("../views/admin/Movies.vue"),
-        meta: { requiresAuth: true, roles: ['admin'] },
-      },
     ],
   },
   {

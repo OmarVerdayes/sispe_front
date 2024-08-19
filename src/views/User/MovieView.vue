@@ -15,46 +15,49 @@
         <h1>{{ movie.title }}</h1>
         <p id="detail">2006 · Ciencia Ficción · {{ movie.length }} min</p>
         <p style="width: 700px"><strong></strong> {{ movie.description }}</p>
-        <button @click="playMovie" class="play-button">
-          <b-icon icon="play-fill" font-scale="1.3"></b-icon>
-          Reproducir
-        </button>
-        <div class="heart-container" title="Like">
-          <input type="checkbox" class="checkbox" id="Give-It-An-Id" />
-          <div class="svg-container">
-            <svg
-              viewBox="0 0 24 24"
-              class="svg-outline"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path
-                d="M17.5,1.917a6.4,6.4,0,0,0-5.5,3.3,6.4,6.4,0,0,0-5.5-3.3A6.8,6.8,0,0,0,0,8.967c0,4.547,4.786,9.513,8.8,12.88a4.974,4.974,0,0,0,6.4,0C19.214,18.48,24,13.514,24,8.967A6.8,6.8,0,0,0,17.5,1.917Zm-3.585,18.4a2.973,2.973,0,0,1-3.83,0C4.947,16.006,2,11.87,2,8.967a4.8,4.8,0,0,1,4.5-5.05A4.8,4.8,0,0,1,11,8.967a1,1,0,0,0,2,0,4.8,4.8,0,0,1,4.5-5.05A4.8,4.8,0,0,1,22,8.967C22,11.87,19.053,16.006,13.915,20.313Z"
-              ></path>
-            </svg>
-            <svg
-              viewBox="0 0 24 24"
-              class="svg-filled"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path
-                d="M17.5,1.917a6.4,6.4,0,0,0-5.5,3.3,6.4,6.4,0,0,0-5.5-3.3A6.8,6.8,0,0,0,0,8.967c0,4.547,4.786,9.513,8.8,12.88a4.974,4.974,0,0,0,6.4,0C19.214,18.48,24,13.514,24,8.967A6.8,6.8,0,0,0,17.5,1.917Z"
-              ></path>
-            </svg>
-            <svg
-              class="svg-celebrate"
-              width="80"
-              height="80"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <polygon points="10,10 20,20"></polygon>
-              <polygon points="10,50 20,50"></polygon>
-              <polygon points="20,80 30,70"></polygon>
-              <polygon points="90,10 80,20"></polygon>
-              <polygon points="90,50 80,50"></polygon>
-              <polygon points="80,80 70,70"></polygon>
-            </svg>
-          </div>
-        </div>
+        <div class="play-heart-container">
+  <button @click="playMovie" class="play-button">
+    <b-icon icon="play-fill" font-scale="1.3"></b-icon>
+    Reproducir
+  </button>
+  <div class="heart-container" title="Like" @click="addToFavorites">
+    <input type="checkbox" class="checkbox" id="Give-It-An-Id" />
+    <div class="svg-container">
+      <svg
+        viewBox="0 0 24 24"
+        class="svg-outline"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <path
+          d="M17.5,1.917a6.4,6.4,0,0,0-5.5,3.3,6.4,6.4,0,0,0-5.5-3.3A6.8,6.8,0,0,0,0,8.967c0,4.547,4.786,9.513,8.8,12.88a4.974,4.974,0,0,0,6.4,0C19.214,18.48,24,13.514,24,8.967A6.8,6.8,0,0,0,17.5,1.917Zm-3.585,18.4a2.973,2.973,0,0,1-3.83,0C4.947,16.006,2,11.87,2,8.967a4.8,4.8,0,0,1,4.5-5.05A4.8,4.8,0,0,1,11,8.967a1,1,0,0,0,2,0,4.8,4.8,0,0,1,4.5-5.05A4.8,4.8,0,0,1,22,8.967C22,11.87,19.053,16.006,13.915,20.313Z"
+        ></path>
+      </svg>
+      <svg
+        viewBox="0 0 24 24"
+        class="svg-filled"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <path
+          d="M17.5,1.917a6.4,6.4,0,0,0-5.5,3.3,6.4,6.4,0,0,0-5.5-3.3A6.8,6.8,0,0,0,0,8.967c0,4.547,4.786,9.513,8.8,12.88a4.974,4.974,0,0,0,6.4,0C19.214,18.48,24,13.514,24,8.967A6.8,6.8,0,0,0,17.5,1.917Z"
+        ></path>
+      </svg>
+      <svg
+        class="svg-celebrate"
+        width="80"
+        height="80"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <polygon points="10,10 20,20"></polygon>
+        <polygon points="10,50 20,50"></polygon>
+        <polygon points="20,80 30,70"></polygon>
+        <polygon points="90,10 80,20"></polygon>
+        <polygon points="90,50 80,50"></polygon>
+        <polygon points="80,80 70,70"></polygon>
+      </svg>
+    </div>
+  </div>
+</div>
+
       </div>
       <div v-if="showVideo" style="top: 0%">
         <video
@@ -235,6 +238,7 @@ export default {
       myComment: null,
       loading: false,
       showVideo: false,
+      isFavorite: false,
     };
   },
   created() {
@@ -278,6 +282,7 @@ export default {
             (comment) => comment.email !== this.myEmail
           );
         }
+        await this.checkIfFavorite();
       } catch (error) {
         console.error("Error al cargar los rateings:", error);
       }
@@ -308,42 +313,6 @@ export default {
         params: { id: this.id_film },
       });
     },
-    /*playMovie() {
-      this.showVideo = true;
-      this.$nextTick(() => {
-        const videoElement = this.$refs.videoPlayer;
-        videoElement.play();
-            videoElement.controls = false;
-        if (videoElement.requestFullscreen) {
-          videoElement.requestFullscreen();
-          videoElement.controls = false;
-        } else if (videoElement.mozRequestFullScreen) {
-          videoElement.mozRequestFullScreen();
-          videoElement.controls = false;
-        } else if (videoElement.webkitRequestFullscreen) { 
-          videoElement.webkitRequestFullscreen();
-          videoElement.controls = false;
-        } else if (videoElement.msRequestFullscreen) {
-          videoElement.msRequestFullscreen();
-          videoElement.controls = false;
-
-        }
-      });
-    },*/
-    /*exitFullScreen() {
-      const videoElement = this.$refs.videoPlayer;
-      if (document.exitFullscreen) {
-        document.exitFullscreen();
-      } else if (document.mozCancelFullScreen) { // Firefox
-        document.mozCancelFullScreen();
-      } else if (document.webkitExitFullscreen) { // Chrome, Safari 
-        document.webkitExitFullscreen();
-      } else if (document.msExitFullscreen) { // IE/Edge
-        document.msExitFullscreen();
-      }
-      videoElement.pause(); // Pausar el video
-      this.showVideo = false;
-    },*/
     goBack() {
       this.$router.push({ name: "home" });
     },
@@ -386,6 +355,40 @@ export default {
         }
       }
     },
+    async checkIfFavorite() {
+    try {
+      const response = await axios.get(
+        `https://qhl0fcehdg.execute-api.us-east-1.amazonaws.com/Prod/favorites/${this.userId}`
+      );
+
+      this.isFavorite = response.data.some(favorite => favorite.fk_film === this.id_film);
+    } catch (error) {
+      console.error("Error al verificar si la película está en favoritos:", error);
+    }
+  },
+    async addToFavorites() {
+    if (!this.userId || !this.id_film) {
+      alert("No se pudo agregar a favoritos. Verifica que estés logueado.");
+      return;
+    }
+
+    const data = {
+      fk_user: this.userId,
+      fk_film: this.id_film,
+    };
+
+    try {
+      const response = await axios.post(
+        "https://qhl0fcehdg.execute-api.us-east-1.amazonaws.com/Prod/favorite",
+        data
+      );
+      alert("Película agregada a favoritos.");
+      this.isFavorite = true;
+    } catch (error) {
+      console.error("Error al agregar a favoritos:", error);
+      alert("Hubo un error al agregar la película a favoritos.");
+    }
+  },
   },
   mounted() {
     window.scrollTo(0, 0);
@@ -551,8 +554,6 @@ export default {
 }
 
 .tabs {
-  /* display: flex;
-  justify-content: center; */
   margin-bottom: 10px;
 }
 
@@ -646,6 +647,19 @@ export default {
 
 .heart-container .checkbox:checked ~ .svg-container .svg-celebrate {
   display: block;
+}
+.play-heart-container {
+  display: flex;
+  align-items: center;
+}
+
+.play-button {
+  margin-right: 10px; 
+}
+
+.heart-container {
+  cursor: pointer;
+  margin-top: 20px;
 }
 
 @keyframes keyframes-svg-filled {

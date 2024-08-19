@@ -8,42 +8,46 @@
     />
     <div class="button-container">
       <button @click="openAddModal" class="Btn">
-  <div class="sign">+</div>
-  <div class="text">Agregar película</div>
-</button>
-
+        <div class="sign">+</div>
+        <div class="text">Agregar película</div>
+      </button>
     </div>
 
     <div style="margin: 50px">
-      <div v-if="Object.keys(filmsByCategory).length">
-        <div v-for="(films, category) in filmsByCategory" :key="category">
-          <p style="font-size: 24px; color: white">{{ category }}</p>
-          <div class="row">
-            <div v-for="film in films" :key="film.film_id" class="col-md-2">
-              <div class="film-card" @click="selectFilm(film)">
-                <img
-                  :src="film.banner"
-                  alt="Front Page"
-                  width="180"
-                  height="270"
-                  class="film-image"
-                />
-                <div class="film-info">
-                  <div
-                    class="row"
-                    style="margin-top: 5px; color: rgb(120, 120, 121)"
-                  >
-                    <div class="col-6">
-                      <p>Duración:</p>
-                    </div>
-                    <div class="col-6">
-                      <p>{{ film.length }} min</p>
-                    </div>
-                    <h2
-                      style="font-size: 20px; color: rgb(197, 196, 195); top: 0"
+      <div v-if="loading">
+        <LoadAnimation />
+      </div>
+      <div v-else>
+        <div v-if="Object.keys(filmsByCategory).length">
+          <div v-for="(films, category) in filmsByCategory" :key="category">
+            <p style="font-size: 24px; color: white">{{ category }}</p>
+            <div class="row">
+              <div v-for="film in films" :key="film.film_id" class="col-md-2">
+                <div class="film-card" @click="selectFilm(film)">
+                  <img
+                    :src="film.banner"
+                    alt="Front Page"
+                    width="180"
+                    height="270"
+                    class="film-image"
+                  />
+                  <div class="film-info">
+                    <div
+                      class="row"
+                      style="margin-top: 5px; color: rgb(120, 120, 121)"
                     >
-                      {{ film.title }}
-                    </h2>
+                      <div class="col-6">
+                        <p>Duración:</p>
+                      </div>
+                      <div class="col-6">
+                        <p>{{ film.length }} min</p>
+                      </div>
+                      <h2
+                        style="font-size: 20px; color: rgb(197, 196, 195); top: 0"
+                      >
+                        {{ film.title }}
+                      </h2>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -51,8 +55,8 @@
           </div>
         </div>
       </div>
-      <p v-else>Cargando películas...</p>
     </div>
+
     <div v-if="showModal" class="modal-overlay" @click.self="close">
       <div class="modal-content">
         <h2 style="color: white; text-align: center">Editar Película</h2>
@@ -122,6 +126,7 @@
         </div>
       </div>
     </div>
+
     <div v-if="showAddModal" class="modal-overlay" @click.self="closeAddModal">
       <div class="modal-content">
         <h2 style="color: white; text-align: center">Agregar Película</h2>
@@ -165,11 +170,16 @@
 </template>
 
 <script>
-import { byCategories } from "../../services/movie.js";
+import { byAll } from "../../services/movie.js";
 import { createMovie } from '../../services/movie';
 import { fetchCategories } from '../../services/categories';
 import Swal from 'sweetalert2';
+import LoadAnimation from '../load/load.vue';
+
 export default {
+  components: {
+    LoadAnimation,
+  },
   data() {
     return {
       movie: {
@@ -187,16 +197,19 @@ export default {
       showModal: false,
       showAddModal: false,
       selectedMovie: {},
+      loading: false, 
     };
   },
   async mounted() {
+    this.loading = true;
     this.categories = await fetchCategories();
     console.log('Categorías cargadas:', this.categories);
     try {
-      this.filmsByCategory = await byCategories();
+      this.filmsByCategory = await byAll();
     } catch (error) {
       console.error("Error loading films:", error);
     }
+    this.loading = false;
   },
   methods: {
     selectFilm(film) {
@@ -204,6 +217,7 @@ export default {
       this.showModal = true;
     },
     async updateFilm() {
+      this.loading = true;
       try {
         this.selectedMovie.status = this.selectedMovie.status
           ? "Activo"
@@ -226,12 +240,24 @@ export default {
 
         const result = await response.json();
         console.log("Película actualizada:", result);
-
+        Swal.fire({
+          title: 'Éxito',
+          text: 'Película actualizada exitosamente.',
+          icon: 'success',
+          confirmButtonText: 'Aceptar'
+        });
         this.showModal = false;
-        this.filmsByCategory = await byCategories();
+        this.filmsByCategory = await byAll();
       } catch (error) {
         console.error("Error al guardar la película:", error);
+        Swal.fire({
+          title: 'Error',
+          text: `Error al actualizar la película: ${error.message}`,
+          icon: 'error',
+          confirmButtonText: 'Aceptar'
+        });
       }
+      this.loading = false;
     },
     close() {
       this.showModal = false;
@@ -249,7 +275,9 @@ export default {
       };
     },
     async addFilm() {
+      this.loading = true;
       try {
+        console.log("Datos de la película que se va a registrar:", this.movie);
         const createdMovie = await createMovie(this.movie);
         if (createdMovie) {
           Swal.fire({
@@ -275,8 +303,10 @@ export default {
           confirmButtonText: 'Aceptar'
         });
       }
+      this.loading = false;
     },
     async submitForm() {
+      this.loading = true;
       try {
         const createdMovie = await createMovie(this.movie);
         if (createdMovie) {
@@ -303,6 +333,7 @@ export default {
           confirmButtonText: 'Aceptar'
         });
       }
+      this.loading = false;
     },
     resetForm() {
       this.movie = {
@@ -323,7 +354,21 @@ export default {
   },
 };
 </script>
+
+
 <style>
+.loading-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 1000;
+}
 .main-container {
   background: #0e141e;
   width: 110vw;

@@ -1,25 +1,6 @@
 <template>
   <div class="main-container">
     <div class="container">
-    <!--<vueper-slides
-      fixed-height = "500px"
-  :visible-slides="1"
-  slide-multiple
-  :slide-ratio="1 / 2.5"
-  :gap="5"
-  :arrows-outside="false"
-  :bullets="false"
-  :touchable = "false" 
->
-  <vueper-slide 
-    v-for="(slide, i) in dataCarousel" 
-    :key="i" 
-    :image="slide.front_page"
-    class="custom-slide"
-  >
-  </vueper-slide>
-</vueper-slides>-->
-
 <carousel-3d 
   :width="1200" 
   :height="430" 
