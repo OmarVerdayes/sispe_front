@@ -373,6 +373,8 @@ export default {
   background: #0e141e;
   width: 110vw;
    z-index: 0;
+    display: flex;
+
 }
 ul {
   list-style-type: none;
