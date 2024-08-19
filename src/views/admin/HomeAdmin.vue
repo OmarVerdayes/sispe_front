@@ -372,7 +372,6 @@ export default {
 .main-container {
   background: #0e141e;
   width: 110vw;
-   z-index: 0;
 }
 ul {
   list-style-type: none;
