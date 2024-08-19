@@ -1,8 +1,5 @@
 <template>
   <div class="main-container">
-    <div v-if="loading" class="loading-overlay">
-      <LoadAnimation />
-    </div>
     <input
       style="margin: 20px"
       type="text"
@@ -17,6 +14,9 @@
     </div>
 
     <div style="margin: 50px">
+    <div v-if="loading" class="loading-overlay">
+      <LoadAnimation />
+    </div>
       <div v-else>
         <div v-if="Object.keys(filmsByCategory).length">
           <div v-for="(films, category) in filmsByCategory" :key="category">
@@ -357,17 +357,17 @@ export default {
 
 
 <style>
-.loading-overlay {
+  .loading-overlay {
   position: fixed;
   top: 0;
   left: 0;
   width: 100%;
-  height: 100%;
-  background-color: rgba(0, 0, 0, 0.5); 
+  height: 100vh;
   display: flex;
   justify-content: center;
   align-items: center;
-  z-index: 9999;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 1000;
 }
 .main-container {
   background: #0e141e;
