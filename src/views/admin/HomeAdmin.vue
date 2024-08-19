@@ -1,5 +1,8 @@
 <template>
   <div class="main-container">
+    <div v-if="loading" class="loading-overlay">
+      <LoadAnimation />
+    </div>
     <input
       style="margin: 20px"
       type="text"
@@ -14,9 +17,6 @@
     </div>
 
     <div style="margin: 50px">
-      <div v-if="loading">
-        <LoadAnimation />
-      </div>
       <div v-else>
         <div v-if="Object.keys(filmsByCategory).length">
           <div v-for="(films, category) in filmsByCategory" :key="category">
