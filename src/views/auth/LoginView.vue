@@ -40,7 +40,12 @@
         <hr>
         <p id="create_account">
           ¿No tienes una cuenta?
-          <router-link to="/register">Crear cuenta</router-link>
+          <router-link v-if="!loading" to="/register">Crear cuenta</router-link>
+          <span v-else>Crear cuenta</span>
+        </p>
+        <p>
+          <router-link v-if="!loading" to="/forgot_password">Olvidastes tu contraseña?</router-link>
+          <span v-else>Olvidastes tu contraseña?</span>
         </p>
       </div>
     </div>

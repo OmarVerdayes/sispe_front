@@ -105,6 +105,16 @@ const routes = [
         name: "change_password",
         component: () => import("../views/auth/Change_temporary_password.vue"),
       },
+      {
+        path: "/forgot_password",
+        name: "forgot_password",
+        component: () => import("../views/auth/ForgotPassword.vue"),
+      },
+      {
+        path: "/change_old_password",
+        name: "change_old_password",
+        component: () => import("../views/auth/ChangePassword.vue"),
+      }
     ],
   },
   {
