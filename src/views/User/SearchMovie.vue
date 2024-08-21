@@ -1,12 +1,12 @@
 <template>
   <div class="movie-search">
-    <input type="text" v-model="searchQuery" @input="handleSearch" placeholder="Título, Género y más." class="search-input">
+    <input type="text" v-model="searchQuery" @input="handleSearch" placeholder="Nombre" class="search-input">
   
     <div class="movies-container">
       <div class="movie-row" v-for="(row, index) in paginatedRows" :key="index">
-        <div class="movie-card" v-for="movie in row" :key="movie.film_id">
+        <div class="movie-card" v-for="movie in row" :key="movie.film_id ">
           <div class="movie-image-wrapper">
-            <img :src="movie.banner" alt="Portada de la película" width="180">
+            <img :src="movie.banner" alt="Portada de la película" width="180" @click="navigateToMovie(movie.film_id)">
           </div>
           <h3>{{ movie.title }}</h3>
         </div>
@@ -75,7 +75,9 @@ export default {
   destroyed() {
     window.removeEventListener('resize', this.handleResize);
   },
-  methods: {
+  methods: {navigateToMovie(filmId) {
+    this.$router.push({ name: 'movie-view', params: { id: filmId } });
+  },
     async fetchMovies() {
       this.loading = true;
       try {

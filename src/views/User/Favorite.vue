@@ -1,5 +1,22 @@
 <template>
   <div class="about">
+    <div class="user-profile">
+    <div v-if="user" class="profile-content">
+      <div class="avatar-wrapper">
+        <img :src="avatarUrl" alt="Avatar" class="avatar" />
+        <button @click="toggleAvatarSelection" class="edit-button"><b-icon icon="pencil-fill"></b-icon></button>
+      </div>
+      <div class="user-info">
+        <h2 class="name">{{ user.name }}</h2>
+        <p class="email">Email: {{ user.email }}</p>
+      </div>
+    </div>
+    <div v-if="showAvatarSelection" class="avatar-selection">
+      <div v-for="(avatar, index) in avatars" :key="index" class="avatar-option">
+        <img :src="avatar" @click="updateAvatar(avatar)" class="avatar-small" />
+      </div>
+    </div>
+  </div>
     <div class="title-content">
       <h1 class="title">Mi lista</h1>
     </div>
@@ -10,29 +27,8 @@
       </div>
       <div v-else class="movies">
         <div v-for="movie in favorites" :key="movie.film_id" class="movie-item">
-          <img :src="movie.front_page" style="width:250px ; height:150px" alt="Poster" class="movie-poster" />
+          <img @click="navigateToMovie(movie.film_id)" :src="movie.front_page" style="width:250px ; height:150px" alt="Poster" class="movie-poster" />
           <h3 class="movie-title">{{ movie.title }}</h3>
-          <div class="heart-container" title="Like">
-            <input type="checkbox" class="checkbox" id="Give-It-An-Id">
-            <div class="svg-container">
-                <svg viewBox="0 0 24 24" class="svg-outline" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M17.5,1.917a6.4,6.4,0,0,0-5.5,3.3,6.4,6.4,0,0,0-5.5-3.3A6.8,6.8,0,0,0,0,8.967c0,4.547,4.786,9.513,8.8,12.88a4.974,4.974,0,0,0,6.4,0C19.214,18.48,24,13.514,24,8.967A6.8,6.8,0,0,0,17.5,1.917Zm-3.585,18.4a2.973,2.973,0,0,1-3.83,0C4.947,16.006,2,11.87,2,8.967a4.8,4.8,0,0,1,4.5-5.05A4.8,4.8,0,0,1,11,8.967a1,1,0,0,0,2,0,4.8,4.8,0,0,1,4.5-5.05A4.8,4.8,0,0,1,22,8.967C22,11.87,19.053,16.006,13.915,20.313Z">
-                    </path>
-                </svg>
-                <svg viewBox="0 0 24 24" class="svg-filled" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M17.5,1.917a6.4,6.4,0,0,0-5.5,3.3,6.4,6.4,0,0,0-5.5-3.3A6.8,6.8,0,0,0,0,8.967c0,4.547,4.786,9.513,8.8,12.88a4.974,4.974,0,0,0,6.4,0C19.214,18.48,24,13.514,24,8.967A6.8,6.8,0,0,0,17.5,1.917Z">
-                    </path>
-                </svg>
-                <svg class="svg-celebrate" width="100" height="100" xmlns="http://www.w3.org/2000/svg">
-                    <polygon points="10,10 20,20"></polygon>
-                    <polygon points="10,50 20,50"></polygon>
-                    <polygon points="20,80 30,70"></polygon>
-                    <polygon points="90,10 80,20"></polygon>
-                    <polygon points="90,50 80,50"></polygon>
-                    <polygon points="80,80 70,70"></polygon>
-                </svg>
-            </div>
-        </div>
         </div>
       </div>
     </div>
@@ -52,12 +48,68 @@ export default {
     return {
       favorites: [],
       loading: true,
+      user: null,
+      avatarUrl: '', 
+      avatars: [
+        'https://profilephotossispe.s3.us-east-1.amazonaws.com/avatar1.png?response-content-disposition=inline&X-Amz-Security-Token=IQoJb3JpZ2luX2VjEHEaCXVzLWVhc3QtMSJHMEUCIQDqkFzg6wceXCLCX1agyeG74tLsUD%2BPvOj7qdmZebrB%2BQIgCJ0nJ%2B1U15AbuGSrji3szPtup4Cy%2FteM08NkxayDHukq5AIIehAAGgwxMzcyMzc1NzA0NzciDMLJDCPpVhhCWLXEmCrBAvfDbAe0Tl5BbKRca5cAnmoztSKfrR1xGVioE8n5E9ERT28AUDhdtGsgBI51BuRrS9InXcZSZ%2B0Dx1wOHA7uz%2BOml3bhZfpAbYaz4BGGLYi%2FDGrsG0WSSICTeGvP0vfiCALAcw532s3V%2BVCIIMRfrDAzXarXZuNE6pXgXOnOZVUtfp5VnrftvWL7B3z6wr%2BQIfOIsdSqg4MAfSLoGpZH1sYemrFbWvFY68w5umP2x1fkiL7iGkjzJaFBXvs8toxZkd4p%2BYNVVWMtgt5etv5tZKsMHMwLbOl07aNWg1NkJgt3j5%2BawjAt1f%2BCPLMBQ1apkRdHLxUOO1K6sCf9%2FnfeFL%2B2PB6vjAweIgMaQ37%2BYZH5XW08dhjArejOsHdmy12siOQ7FNZWgN%2BvRrFCfob%2FXSAoULs1c%2Bn6KepF4AHd7JrM%2FDDPqpi2BjqzAv4HlkthDwUl0tdTNnPur%2BTaST5d%2FXs2Zonzz1hlaT9ohxkLKDckb92P9lH42qoUjnmv8EBt%2BcS0PJw7XbFwTjdirjKiyBIa33BPXrsfeNM5H%2B%2BMu6uOEhuBfoA%2FP7tn3urh6UHApU4IvnHJlCNDux1Bh0B6Hcjg29jPpeW8L02FsglFYuHjirpZoX1%2BreR7bUDY8r5jX7UMffssXE%2FQg0pNvHeh3jvjqycnVd2xI66r6SS3QCabTPT378mDQImf79oPyjTIn0nQ7tBroItwsb%2BGb%2BWT7odEEDLk%2Fp%2B5pWJSErkBBarfLV%2Bg9SnLQidtX09Peibz30p4mkOjKY%2FIOmr7nFqEOEqdlcRFwsZtQRsXijUFLO6HI4fho5CWfs1uown4HeBEcumCc7CNsqIDnScrf1o%3D&X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Date=20240821T162737Z&X-Amz-SignedHeaders=host&X-Amz-Expires=300&X-Amz-Credential=ASIAR7477EOWXVXESW6K%2F20240821%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Signature=578cc59211868fa9c4d0889a773d7ab7dfd0d3f95547d7fb693c1af0bc1d380e',
+        'https://profilephotossispe.s3.us-east-1.amazonaws.com/avatar2.png?response-content-disposition=inline&X-Amz-Security-Token=IQoJb3JpZ2luX2VjEHEaCXVzLWVhc3QtMSJHMEUCIQDqkFzg6wceXCLCX1agyeG74tLsUD%2BPvOj7qdmZebrB%2BQIgCJ0nJ%2B1U15AbuGSrji3szPtup4Cy%2FteM08NkxayDHukq5AIIehAAGgwxMzcyMzc1NzA0NzciDMLJDCPpVhhCWLXEmCrBAvfDbAe0Tl5BbKRca5cAnmoztSKfrR1xGVioE8n5E9ERT28AUDhdtGsgBI51BuRrS9InXcZSZ%2B0Dx1wOHA7uz%2BOml3bhZfpAbYaz4BGGLYi%2FDGrsG0WSSICTeGvP0vfiCALAcw532s3V%2BVCIIMRfrDAzXarXZuNE6pXgXOnOZVUtfp5VnrftvWL7B3z6wr%2BQIfOIsdSqg4MAfSLoGpZH1sYemrFbWvFY68w5umP2x1fkiL7iGkjzJaFBXvs8toxZkd4p%2BYNVVWMtgt5etv5tZKsMHMwLbOl07aNWg1NkJgt3j5%2BawjAt1f%2BCPLMBQ1apkRdHLxUOO1K6sCf9%2FnfeFL%2B2PB6vjAweIgMaQ37%2BYZH5XW08dhjArejOsHdmy12siOQ7FNZWgN%2BvRrFCfob%2FXSAoULs1c%2Bn6KepF4AHd7JrM%2FDDPqpi2BjqzAv4HlkthDwUl0tdTNnPur%2BTaST5d%2FXs2Zonzz1hlaT9ohxkLKDckb92P9lH42qoUjnmv8EBt%2BcS0PJw7XbFwTjdirjKiyBIa33BPXrsfeNM5H%2B%2BMu6uOEhuBfoA%2FP7tn3urh6UHApU4IvnHJlCNDux1Bh0B6Hcjg29jPpeW8L02FsglFYuHjirpZoX1%2BreR7bUDY8r5jX7UMffssXE%2FQg0pNvHeh3jvjqycnVd2xI66r6SS3QCabTPT378mDQImf79oPyjTIn0nQ7tBroItwsb%2BGb%2BWT7odEEDLk%2Fp%2B5pWJSErkBBarfLV%2Bg9SnLQidtX09Peibz30p4mkOjKY%2FIOmr7nFqEOEqdlcRFwsZtQRsXijUFLO6HI4fho5CWfs1uown4HeBEcumCc7CNsqIDnScrf1o%3D&X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Date=20240821T164448Z&X-Amz-SignedHeaders=host&X-Amz-Expires=300&X-Amz-Credential=ASIAR7477EOWXVXESW6K%2F20240821%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Signature=d8c2b96688f89954e7ae9b1854623ab036e93ae7566923fd95e9bb4b32a1ad5f',
+        'https://profilephotossispe.s3.us-east-1.amazonaws.com/avatar3.png?response-content-disposition=inline&X-Amz-Security-Token=IQoJb3JpZ2luX2VjEHEaCXVzLWVhc3QtMSJHMEUCIQDqkFzg6wceXCLCX1agyeG74tLsUD%2BPvOj7qdmZebrB%2BQIgCJ0nJ%2B1U15AbuGSrji3szPtup4Cy%2FteM08NkxayDHukq5AIIehAAGgwxMzcyMzc1NzA0NzciDMLJDCPpVhhCWLXEmCrBAvfDbAe0Tl5BbKRca5cAnmoztSKfrR1xGVioE8n5E9ERT28AUDhdtGsgBI51BuRrS9InXcZSZ%2B0Dx1wOHA7uz%2BOml3bhZfpAbYaz4BGGLYi%2FDGrsG0WSSICTeGvP0vfiCALAcw532s3V%2BVCIIMRfrDAzXarXZuNE6pXgXOnOZVUtfp5VnrftvWL7B3z6wr%2BQIfOIsdSqg4MAfSLoGpZH1sYemrFbWvFY68w5umP2x1fkiL7iGkjzJaFBXvs8toxZkd4p%2BYNVVWMtgt5etv5tZKsMHMwLbOl07aNWg1NkJgt3j5%2BawjAt1f%2BCPLMBQ1apkRdHLxUOO1K6sCf9%2FnfeFL%2B2PB6vjAweIgMaQ37%2BYZH5XW08dhjArejOsHdmy12siOQ7FNZWgN%2BvRrFCfob%2FXSAoULs1c%2Bn6KepF4AHd7JrM%2FDDPqpi2BjqzAv4HlkthDwUl0tdTNnPur%2BTaST5d%2FXs2Zonzz1hlaT9ohxkLKDckb92P9lH42qoUjnmv8EBt%2BcS0PJw7XbFwTjdirjKiyBIa33BPXrsfeNM5H%2B%2BMu6uOEhuBfoA%2FP7tn3urh6UHApU4IvnHJlCNDux1Bh0B6Hcjg29jPpeW8L02FsglFYuHjirpZoX1%2BreR7bUDY8r5jX7UMffssXE%2FQg0pNvHeh3jvjqycnVd2xI66r6SS3QCabTPT378mDQImf79oPyjTIn0nQ7tBroItwsb%2BGb%2BWT7odEEDLk%2Fp%2B5pWJSErkBBarfLV%2Bg9SnLQidtX09Peibz30p4mkOjKY%2FIOmr7nFqEOEqdlcRFwsZtQRsXijUFLO6HI4fho5CWfs1uown4HeBEcumCc7CNsqIDnScrf1o%3D&X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Date=20240821T170406Z&X-Amz-SignedHeaders=host&X-Amz-Expires=300&X-Amz-Credential=ASIAR7477EOWXVXESW6K%2F20240821%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Signature=2f91c15df7a411b58d4c323f8453d2c202d208b1f9b0b1ac189e50bb09f18b94',
+        'https://profilephotossispe.s3.us-east-1.amazonaws.com/avatar4.png?response-content-disposition=inline&X-Amz-Security-Token=IQoJb3JpZ2luX2VjEHEaCXVzLWVhc3QtMSJHMEUCIQDqkFzg6wceXCLCX1agyeG74tLsUD%2BPvOj7qdmZebrB%2BQIgCJ0nJ%2B1U15AbuGSrji3szPtup4Cy%2FteM08NkxayDHukq5AIIehAAGgwxMzcyMzc1NzA0NzciDMLJDCPpVhhCWLXEmCrBAvfDbAe0Tl5BbKRca5cAnmoztSKfrR1xGVioE8n5E9ERT28AUDhdtGsgBI51BuRrS9InXcZSZ%2B0Dx1wOHA7uz%2BOml3bhZfpAbYaz4BGGLYi%2FDGrsG0WSSICTeGvP0vfiCALAcw532s3V%2BVCIIMRfrDAzXarXZuNE6pXgXOnOZVUtfp5VnrftvWL7B3z6wr%2BQIfOIsdSqg4MAfSLoGpZH1sYemrFbWvFY68w5umP2x1fkiL7iGkjzJaFBXvs8toxZkd4p%2BYNVVWMtgt5etv5tZKsMHMwLbOl07aNWg1NkJgt3j5%2BawjAt1f%2BCPLMBQ1apkRdHLxUOO1K6sCf9%2FnfeFL%2B2PB6vjAweIgMaQ37%2BYZH5XW08dhjArejOsHdmy12siOQ7FNZWgN%2BvRrFCfob%2FXSAoULs1c%2Bn6KepF4AHd7JrM%2FDDPqpi2BjqzAv4HlkthDwUl0tdTNnPur%2BTaST5d%2FXs2Zonzz1hlaT9ohxkLKDckb92P9lH42qoUjnmv8EBt%2BcS0PJw7XbFwTjdirjKiyBIa33BPXrsfeNM5H%2B%2BMu6uOEhuBfoA%2FP7tn3urh6UHApU4IvnHJlCNDux1Bh0B6Hcjg29jPpeW8L02FsglFYuHjirpZoX1%2BreR7bUDY8r5jX7UMffssXE%2FQg0pNvHeh3jvjqycnVd2xI66r6SS3QCabTPT378mDQImf79oPyjTIn0nQ7tBroItwsb%2BGb%2BWT7odEEDLk%2Fp%2B5pWJSErkBBarfLV%2Bg9SnLQidtX09Peibz30p4mkOjKY%2FIOmr7nFqEOEqdlcRFwsZtQRsXijUFLO6HI4fho5CWfs1uown4HeBEcumCc7CNsqIDnScrf1o%3D&X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Date=20240821T170436Z&X-Amz-SignedHeaders=host&X-Amz-Expires=300&X-Amz-Credential=ASIAR7477EOWXVXESW6K%2F20240821%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Signature=13a806b6f856cbf8e204b8482bedacbc6f52905bb9d385e6c4783ac8ac23c6f6',
+        'https://profilephotossispe.s3.us-east-1.amazonaws.com/avatar5.png?response-content-disposition=inline&X-Amz-Security-Token=IQoJb3JpZ2luX2VjEHEaCXVzLWVhc3QtMSJHMEUCIQDqkFzg6wceXCLCX1agyeG74tLsUD%2BPvOj7qdmZebrB%2BQIgCJ0nJ%2B1U15AbuGSrji3szPtup4Cy%2FteM08NkxayDHukq5AIIehAAGgwxMzcyMzc1NzA0NzciDMLJDCPpVhhCWLXEmCrBAvfDbAe0Tl5BbKRca5cAnmoztSKfrR1xGVioE8n5E9ERT28AUDhdtGsgBI51BuRrS9InXcZSZ%2B0Dx1wOHA7uz%2BOml3bhZfpAbYaz4BGGLYi%2FDGrsG0WSSICTeGvP0vfiCALAcw532s3V%2BVCIIMRfrDAzXarXZuNE6pXgXOnOZVUtfp5VnrftvWL7B3z6wr%2BQIfOIsdSqg4MAfSLoGpZH1sYemrFbWvFY68w5umP2x1fkiL7iGkjzJaFBXvs8toxZkd4p%2BYNVVWMtgt5etv5tZKsMHMwLbOl07aNWg1NkJgt3j5%2BawjAt1f%2BCPLMBQ1apkRdHLxUOO1K6sCf9%2FnfeFL%2B2PB6vjAweIgMaQ37%2BYZH5XW08dhjArejOsHdmy12siOQ7FNZWgN%2BvRrFCfob%2FXSAoULs1c%2Bn6KepF4AHd7JrM%2FDDPqpi2BjqzAv4HlkthDwUl0tdTNnPur%2BTaST5d%2FXs2Zonzz1hlaT9ohxkLKDckb92P9lH42qoUjnmv8EBt%2BcS0PJw7XbFwTjdirjKiyBIa33BPXrsfeNM5H%2B%2BMu6uOEhuBfoA%2FP7tn3urh6UHApU4IvnHJlCNDux1Bh0B6Hcjg29jPpeW8L02FsglFYuHjirpZoX1%2BreR7bUDY8r5jX7UMffssXE%2FQg0pNvHeh3jvjqycnVd2xI66r6SS3QCabTPT378mDQImf79oPyjTIn0nQ7tBroItwsb%2BGb%2BWT7odEEDLk%2Fp%2B5pWJSErkBBarfLV%2Bg9SnLQidtX09Peibz30p4mkOjKY%2FIOmr7nFqEOEqdlcRFwsZtQRsXijUFLO6HI4fho5CWfs1uown4HeBEcumCc7CNsqIDnScrf1o%3D&X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Date=20240821T170503Z&X-Amz-SignedHeaders=host&X-Amz-Expires=300&X-Amz-Credential=ASIAR7477EOWXVXESW6K%2F20240821%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Signature=1e8359fd09f4512cb34efa5fe548c265cb3b312bfa1185e14d398c66c9fa2652',
+        'https://profilephotossispe.s3.us-east-1.amazonaws.com/avatar6.png?response-content-disposition=inline&X-Amz-Security-Token=IQoJb3JpZ2luX2VjEHEaCXVzLWVhc3QtMSJHMEUCIQDqkFzg6wceXCLCX1agyeG74tLsUD%2BPvOj7qdmZebrB%2BQIgCJ0nJ%2B1U15AbuGSrji3szPtup4Cy%2FteM08NkxayDHukq5AIIehAAGgwxMzcyMzc1NzA0NzciDMLJDCPpVhhCWLXEmCrBAvfDbAe0Tl5BbKRca5cAnmoztSKfrR1xGVioE8n5E9ERT28AUDhdtGsgBI51BuRrS9InXcZSZ%2B0Dx1wOHA7uz%2BOml3bhZfpAbYaz4BGGLYi%2FDGrsG0WSSICTeGvP0vfiCALAcw532s3V%2BVCIIMRfrDAzXarXZuNE6pXgXOnOZVUtfp5VnrftvWL7B3z6wr%2BQIfOIsdSqg4MAfSLoGpZH1sYemrFbWvFY68w5umP2x1fkiL7iGkjzJaFBXvs8toxZkd4p%2BYNVVWMtgt5etv5tZKsMHMwLbOl07aNWg1NkJgt3j5%2BawjAt1f%2BCPLMBQ1apkRdHLxUOO1K6sCf9%2FnfeFL%2B2PB6vjAweIgMaQ37%2BYZH5XW08dhjArejOsHdmy12siOQ7FNZWgN%2BvRrFCfob%2FXSAoULs1c%2Bn6KepF4AHd7JrM%2FDDPqpi2BjqzAv4HlkthDwUl0tdTNnPur%2BTaST5d%2FXs2Zonzz1hlaT9ohxkLKDckb92P9lH42qoUjnmv8EBt%2BcS0PJw7XbFwTjdirjKiyBIa33BPXrsfeNM5H%2B%2BMu6uOEhuBfoA%2FP7tn3urh6UHApU4IvnHJlCNDux1Bh0B6Hcjg29jPpeW8L02FsglFYuHjirpZoX1%2BreR7bUDY8r5jX7UMffssXE%2FQg0pNvHeh3jvjqycnVd2xI66r6SS3QCabTPT378mDQImf79oPyjTIn0nQ7tBroItwsb%2BGb%2BWT7odEEDLk%2Fp%2B5pWJSErkBBarfLV%2Bg9SnLQidtX09Peibz30p4mkOjKY%2FIOmr7nFqEOEqdlcRFwsZtQRsXijUFLO6HI4fho5CWfs1uown4HeBEcumCc7CNsqIDnScrf1o%3D&X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Date=20240821T170540Z&X-Amz-SignedHeaders=host&X-Amz-Expires=300&X-Amz-Credential=ASIAR7477EOWXVXESW6K%2F20240821%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Signature=a75d5029fe6c704eee4272c54d7006dca10b3cf4023fa652e6a07d7e5e0a4048',
+        'https://profilephotossispe.s3.us-east-1.amazonaws.com/avatar7.png?response-content-disposition=inline&X-Amz-Security-Token=IQoJb3JpZ2luX2VjEHEaCXVzLWVhc3QtMSJHMEUCIQDqkFzg6wceXCLCX1agyeG74tLsUD%2BPvOj7qdmZebrB%2BQIgCJ0nJ%2B1U15AbuGSrji3szPtup4Cy%2FteM08NkxayDHukq5AIIehAAGgwxMzcyMzc1NzA0NzciDMLJDCPpVhhCWLXEmCrBAvfDbAe0Tl5BbKRca5cAnmoztSKfrR1xGVioE8n5E9ERT28AUDhdtGsgBI51BuRrS9InXcZSZ%2B0Dx1wOHA7uz%2BOml3bhZfpAbYaz4BGGLYi%2FDGrsG0WSSICTeGvP0vfiCALAcw532s3V%2BVCIIMRfrDAzXarXZuNE6pXgXOnOZVUtfp5VnrftvWL7B3z6wr%2BQIfOIsdSqg4MAfSLoGpZH1sYemrFbWvFY68w5umP2x1fkiL7iGkjzJaFBXvs8toxZkd4p%2BYNVVWMtgt5etv5tZKsMHMwLbOl07aNWg1NkJgt3j5%2BawjAt1f%2BCPLMBQ1apkRdHLxUOO1K6sCf9%2FnfeFL%2B2PB6vjAweIgMaQ37%2BYZH5XW08dhjArejOsHdmy12siOQ7FNZWgN%2BvRrFCfob%2FXSAoULs1c%2Bn6KepF4AHd7JrM%2FDDPqpi2BjqzAv4HlkthDwUl0tdTNnPur%2BTaST5d%2FXs2Zonzz1hlaT9ohxkLKDckb92P9lH42qoUjnmv8EBt%2BcS0PJw7XbFwTjdirjKiyBIa33BPXrsfeNM5H%2B%2BMu6uOEhuBfoA%2FP7tn3urh6UHApU4IvnHJlCNDux1Bh0B6Hcjg29jPpeW8L02FsglFYuHjirpZoX1%2BreR7bUDY8r5jX7UMffssXE%2FQg0pNvHeh3jvjqycnVd2xI66r6SS3QCabTPT378mDQImf79oPyjTIn0nQ7tBroItwsb%2BGb%2BWT7odEEDLk%2Fp%2B5pWJSErkBBarfLV%2Bg9SnLQidtX09Peibz30p4mkOjKY%2FIOmr7nFqEOEqdlcRFwsZtQRsXijUFLO6HI4fho5CWfs1uown4HeBEcumCc7CNsqIDnScrf1o%3D&X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Date=20240821T165217Z&X-Amz-SignedHeaders=host&X-Amz-Expires=300&X-Amz-Credential=ASIAR7477EOWXVXESW6K%2F20240821%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Signature=7616aedb5e60e59c12ce29af9b976ee955ade2dae241dc51c36330439d069d2c',
+        'https://profilephotossispe.s3.us-east-1.amazonaws.com/gunbal.png?response-content-disposition=inline&X-Amz-Security-Token=IQoJb3JpZ2luX2VjEHEaCXVzLWVhc3QtMSJHMEUCIQDqkFzg6wceXCLCX1agyeG74tLsUD%2BPvOj7qdmZebrB%2BQIgCJ0nJ%2B1U15AbuGSrji3szPtup4Cy%2FteM08NkxayDHukq5AIIehAAGgwxMzcyMzc1NzA0NzciDMLJDCPpVhhCWLXEmCrBAvfDbAe0Tl5BbKRca5cAnmoztSKfrR1xGVioE8n5E9ERT28AUDhdtGsgBI51BuRrS9InXcZSZ%2B0Dx1wOHA7uz%2BOml3bhZfpAbYaz4BGGLYi%2FDGrsG0WSSICTeGvP0vfiCALAcw532s3V%2BVCIIMRfrDAzXarXZuNE6pXgXOnOZVUtfp5VnrftvWL7B3z6wr%2BQIfOIsdSqg4MAfSLoGpZH1sYemrFbWvFY68w5umP2x1fkiL7iGkjzJaFBXvs8toxZkd4p%2BYNVVWMtgt5etv5tZKsMHMwLbOl07aNWg1NkJgt3j5%2BawjAt1f%2BCPLMBQ1apkRdHLxUOO1K6sCf9%2FnfeFL%2B2PB6vjAweIgMaQ37%2BYZH5XW08dhjArejOsHdmy12siOQ7FNZWgN%2BvRrFCfob%2FXSAoULs1c%2Bn6KepF4AHd7JrM%2FDDPqpi2BjqzAv4HlkthDwUl0tdTNnPur%2BTaST5d%2FXs2Zonzz1hlaT9ohxkLKDckb92P9lH42qoUjnmv8EBt%2BcS0PJw7XbFwTjdirjKiyBIa33BPXrsfeNM5H%2B%2BMu6uOEhuBfoA%2FP7tn3urh6UHApU4IvnHJlCNDux1Bh0B6Hcjg29jPpeW8L02FsglFYuHjirpZoX1%2BreR7bUDY8r5jX7UMffssXE%2FQg0pNvHeh3jvjqycnVd2xI66r6SS3QCabTPT378mDQImf79oPyjTIn0nQ7tBroItwsb%2BGb%2BWT7odEEDLk%2Fp%2B5pWJSErkBBarfLV%2Bg9SnLQidtX09Peibz30p4mkOjKY%2FIOmr7nFqEOEqdlcRFwsZtQRsXijUFLO6HI4fho5CWfs1uown4HeBEcumCc7CNsqIDnScrf1o%3D&X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Date=20240821T165245Z&X-Amz-SignedHeaders=host&X-Amz-Expires=300&X-Amz-Credential=ASIAR7477EOWXVXESW6K%2F20240821%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Signature=69b0e097bdc31d4f00a6e03de839ef2cb3dca4a4fd43858b4e83f083443d490c',
+        'https://profilephotossispe.s3.us-east-1.amazonaws.com/wallE.png?response-content-disposition=inline&X-Amz-Security-Token=IQoJb3JpZ2luX2VjEHEaCXVzLWVhc3QtMSJHMEUCIQDqkFzg6wceXCLCX1agyeG74tLsUD%2BPvOj7qdmZebrB%2BQIgCJ0nJ%2B1U15AbuGSrji3szPtup4Cy%2FteM08NkxayDHukq5AIIehAAGgwxMzcyMzc1NzA0NzciDMLJDCPpVhhCWLXEmCrBAvfDbAe0Tl5BbKRca5cAnmoztSKfrR1xGVioE8n5E9ERT28AUDhdtGsgBI51BuRrS9InXcZSZ%2B0Dx1wOHA7uz%2BOml3bhZfpAbYaz4BGGLYi%2FDGrsG0WSSICTeGvP0vfiCALAcw532s3V%2BVCIIMRfrDAzXarXZuNE6pXgXOnOZVUtfp5VnrftvWL7B3z6wr%2BQIfOIsdSqg4MAfSLoGpZH1sYemrFbWvFY68w5umP2x1fkiL7iGkjzJaFBXvs8toxZkd4p%2BYNVVWMtgt5etv5tZKsMHMwLbOl07aNWg1NkJgt3j5%2BawjAt1f%2BCPLMBQ1apkRdHLxUOO1K6sCf9%2FnfeFL%2B2PB6vjAweIgMaQ37%2BYZH5XW08dhjArejOsHdmy12siOQ7FNZWgN%2BvRrFCfob%2FXSAoULs1c%2Bn6KepF4AHd7JrM%2FDDPqpi2BjqzAv4HlkthDwUl0tdTNnPur%2BTaST5d%2FXs2Zonzz1hlaT9ohxkLKDckb92P9lH42qoUjnmv8EBt%2BcS0PJw7XbFwTjdirjKiyBIa33BPXrsfeNM5H%2B%2BMu6uOEhuBfoA%2FP7tn3urh6UHApU4IvnHJlCNDux1Bh0B6Hcjg29jPpeW8L02FsglFYuHjirpZoX1%2BreR7bUDY8r5jX7UMffssXE%2FQg0pNvHeh3jvjqycnVd2xI66r6SS3QCabTPT378mDQImf79oPyjTIn0nQ7tBroItwsb%2BGb%2BWT7odEEDLk%2Fp%2B5pWJSErkBBarfLV%2Bg9SnLQidtX09Peibz30p4mkOjKY%2FIOmr7nFqEOEqdlcRFwsZtQRsXijUFLO6HI4fho5CWfs1uown4HeBEcumCc7CNsqIDnScrf1o%3D&X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Date=20240821T165255Z&X-Amz-SignedHeaders=host&X-Amz-Expires=300&X-Amz-Credential=ASIAR7477EOWXVXESW6K%2F20240821%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Signature=fff95feb93d47fc397664e4d84cd79f43af8887d6567da3f1ef929006805473c',
+      ],
+      showAvatarSelection: false
     };
   },
   created() {
     this.loadFavorites();
+    this.fetchUserProfile();
+    this.loadAvatar();
   },
   methods: {
+    navigateToMovie(filmId) {
+    this.$router.push({ name: 'movie-view', params: { id: filmId } });
+  },
+    fetchUserProfile() {
+      const authUser = JSON.parse(localStorage.getItem('authUser'));
+
+      if (authUser && authUser.user && authUser.user.email) {
+        const email = authUser.user.email;
+        fetch(`https://lhgkaf7rki.execute-api.us-east-1.amazonaws.com/Prod/user/${email}`)
+          .then(response => response.json())
+          .then(data => {
+            this.user = {
+              name: data.user.name,
+              email: data.user.email,
+            };
+          })
+          .catch(error => console.error('Error fetching user profile:', error));
+      } else {
+        console.error('No user email found in localStorage');
+      }
+    }, 
+    toggleAvatarSelection() {
+      this.showAvatarSelection = !this.showAvatarSelection;
+    },
+    updateAvatar(url) {
+      this.avatarUrl = url;
+      this.showAvatarSelection = false;
+      this.saveAvatar(url);
+    },
+    loadAvatar() {
+      const savedAvatar = localStorage.getItem('userAvatar');
+      if (savedAvatar) {
+        this.avatarUrl = savedAvatar;
+      } else {
+        this.avatarUrl = 'https://profilephotossispe.s3.us-east-1.amazonaws.com/default-avatar.png'; // Imagen por defecto
+      }
+    },
+    saveAvatar(url) {
+      localStorage.setItem('userAvatar', url);
+    },
     async loadFavorites() {
       const authUser = JSON.parse(localStorage.getItem("authUser"));
       const userId = authUser.user ? authUser.user.id.toUpperCase() : null;
@@ -72,21 +124,8 @@ export default {
           `https://qhl0fcehdg.execute-api.us-east-1.amazonaws.com/Prod/favorites/${userId}`
         );
         this.favorites = response.data;
-
-        Swal.fire({
-          title: 'Éxito',
-          text: 'Lista de favoritos cargada correctamente.',
-          icon: 'success',
-          confirmButtonText: 'Aceptar'
-        });
       } catch (error) {
         console.error("Error al cargar la lista de favoritos:", error);
-        Swal.fire({
-          title: 'Error',
-          text: 'No se pudo cargar la lista de favoritos.',
-          icon: 'error',
-          confirmButtonText: 'Aceptar'
-        });
       } finally {
         this.loading = false;
       }
@@ -96,90 +135,73 @@ export default {
 </script>
 
 <style scoped>
-.heart-container {
-  --heart-color: rgb(255, 91, 137);
-  position: relative;
-  width: 50px;
-  height: 50px;
-  transition: .3s;
+
+.user-profile {
+  margin: 20px;
+}
+.profile-content {
+  display: flex;
+  align-items: center;
+  color: black;
 }
 
-.heart-container .checkbox {
+.avatar-wrapper {
+  display: inline-block;
+  position: relative;
+  align-items: center;
+  margin-right: 20px;}
+
+.avatar {
+  width: 200px;
+  height: 200px;
+  border-radius: 50%;
+}
+
+.edit-button {
   position: absolute;
-  width: 100%;
-  height: 100%;
-  opacity: 0;
-  z-index: 20;
+  bottom: 10px; 
+  right: 10px;
+  background-color: rgba(0, 0, 0, 0.5); 
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 30px; 
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+.user-info {
+  display: flex;
+  flex-direction: column;
+  color:white;
+}
+.name {
+  font-size: 3.5em;
+  margin: 0;
+  color:white;
+}
+
+.email {
+  font-size: 1.0em;
+  margin: 0;
+}
+.avatar-selection {
+  margin-top: 20px;
+  display: flex;
+  gap: 10px;
+}
+
+.avatar-option {
+  margin-right: 10px;
   cursor: pointer;
 }
 
-.heart-container .svg-container {
-  width: 100%;
-  height: 100%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-.heart-container .svg-outline,
-        .heart-container .svg-filled {
-  fill: var(--heart-color);
-  position: absolute;
-}
-
-.heart-container .svg-filled {
-  animation: keyframes-svg-filled 1s;
-  display: none;
-}
-
-.heart-container .svg-celebrate {
-  position: absolute;
-  animation: keyframes-svg-celebrate .5s;
-  animation-fill-mode: forwards;
-  display: none;
-  stroke: var(--heart-color);
-  fill: var(--heart-color);
-  stroke-width: 2px;
-}
-
-.heart-container .checkbox:checked~.svg-container .svg-filled {
-  display: block
-}
-
-.heart-container .checkbox:checked~.svg-container .svg-celebrate {
-  display: block
-}
-
-@keyframes keyframes-svg-filled {
-  0% {
-    transform: scale(0);
-  }
-
-  25% {
-    transform: scale(1.2);
-  }
-
-  50% {
-    transform: scale(1);
-    filter: brightness(1.5);
-  }
-}
-
-@keyframes keyframes-svg-celebrate {
-  0% {
-    transform: scale(0);
-  }
-
-  50% {
-    opacity: 1;
-    filter: brightness(1.5);
-  }
-
-  100% {
-    transform: scale(1.4);
-    opacity: 0;
-    display: none;
-  }
+.avatar-small {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
 }
 .about {
   background-color: #00050D;

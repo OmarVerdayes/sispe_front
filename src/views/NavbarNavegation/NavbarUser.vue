@@ -11,8 +11,7 @@
           <b-navbar-nav class="mx-auto">
             <b-nav-item :to="{ name: 'home' }" @click="selectOption('home')" :class="{ 'active': selectedOption === 'home' }">Inicio</b-nav-item>
             <b-nav-item :to="{ name: 'search' }" @click="selectOption('search')" :class="{ 'active': selectedOption === 'search' }">Búsqueda</b-nav-item>
-            <b-nav-item :to="{ name: 'favorite' }" @click="selectOption('favorite')" :class="{ 'active': selectedOption === 'favorite' }">Mis favoritos</b-nav-item>
-            <b-nav-item :to="{ name: 'profile' }" @click="selectOption('profile')" :class="{ 'active': selectedOption === 'profile' }">Mi cuenta</b-nav-item>
+            <b-nav-item :to="{ name: 'favorite' }" @click="selectOption('favorite')" :class="{ 'active': selectedOption === 'favorite' }">Mi cuenta</b-nav-item>
           </b-navbar-nav>
           <b-navbar-nav class="ml-auto">
             <button class="Btn" @click="logout">

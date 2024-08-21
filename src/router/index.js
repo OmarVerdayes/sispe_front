@@ -147,7 +147,6 @@ router.beforeEach((to, from, next) => {
   if (requiresAuth && user) {
     const userRole = user.user.rol.nrol;
     const requiredRoles = to.meta.roles || [];
-    console.log(`Rol del Usuario: ${userRole}`);
     if (requiredRoles.length > 0 && !requiredRoles.includes(userRole)) {
       next({ name: "unauthorized" });
       return;

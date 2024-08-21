@@ -66,7 +66,7 @@ export default {
   methods: {
     async onSubmitRegister(event) {
       event.preventDefault();
-      this.loading = true; // Activar indicador de carga
+      this.loading = true;
 
       try {
         const { token, error } = await this.stripe.createToken(this.card);

@@ -21,9 +21,10 @@
     Reproducir
   </button>
   <div class="heart-container" title="Like" @click="addToFavorites">
-    <input type="checkbox" class="checkbox" id="Give-It-An-Id" />
+    <input type="checkbox" class="checkbox" id="Give-It-An-Id" :checked="isFavorite" />
     <div class="svg-container">
       <svg
+        v-if="!isFavorite"
         viewBox="0 0 24 24"
         class="svg-outline"
         xmlns="http://www.w3.org/2000/svg"
@@ -33,6 +34,7 @@
         ></path>
       </svg>
       <svg
+        v-if="isFavorite"
         viewBox="0 0 24 24"
         class="svg-filled"
         xmlns="http://www.w3.org/2000/svg"
@@ -218,6 +220,7 @@
 <script>
 import axios from "axios";
 import LoadAnimation from "../load/load.vue";
+import Swal from "sweetalert2";
 
 export default {
   components: {
@@ -242,6 +245,11 @@ export default {
     };
   },
   created() {
+    const authUser = JSON.parse(localStorage.getItem("authUser"));
+    if (authUser && authUser.user) {
+      this.userId = authUser.user.id.toUpperCase();
+      this.myEmail = authUser.user.email;
+    }
     this.loadMovie();
   },
   methods: {
@@ -255,7 +263,6 @@ export default {
     },
     setRating(rating) {
       this.currentRating = rating;
-      console.log("Calificación seleccionada:", this.currentRating);
     },
     async loadMovie() {
       this.loading = true;
@@ -282,7 +289,7 @@ export default {
             (comment) => comment.email !== this.myEmail
           );
         }
-        await this.checkIfFavorite();
+        await this.checkIfFavorite(); 
       } catch (error) {
         console.error("Error al cargar los rateings:", error);
       }
@@ -325,9 +332,11 @@ export default {
     },
     async submitComment() {
       if (this.currentRating === 0 || this.userComment.trim() === "") {
-        alert(
-          "Por favor, selecciona una calificación y escribe un comentario."
-        );
+        Swal.fire({
+          icon: 'warning',
+          title: 'Datos incompletos',
+          text: 'Por favor, selecciona una calificación y escribe un comentario.',
+        });
         return;
       }
 
@@ -344,58 +353,97 @@ export default {
           fk_film: this.id_film,
         };
         try {
-          const response = await axios.post(
+          await axios.post(
             `https://vw5jvgq7hj.execute-api.us-east-1.amazonaws.com/Prod/rating/`,
             data
           );
           this.myComment = data;
-          alert("Comentario creado.");
+          Swal.fire({
+            icon: 'success',
+            title: 'Comentario creado',
+            text: 'Tu comentario ha sido creado con éxito.',
+          });
         } catch (error) {
-          console.log("error al registrar el comentario: ", error);
+          Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: 'Hubo un error al registrar el comentario.',
+          });
         }
       }
     },
-    async checkIfFavorite() {
-    try {
-      const response = await axios.get(
-        `https://qhl0fcehdg.execute-api.us-east-1.amazonaws.com/Prod/favorites/${this.userId}`
-      );
-
-      this.isFavorite = response.data.some(favorite => favorite.fk_film === this.id_film);
-    } catch (error) {
-      console.error("Error al verificar si la película está en favoritos:", error);
-    }
-  },
     async addToFavorites() {
-    if (!this.userId || !this.id_film) {
-      alert("No se pudo agregar a favoritos. Verifica que estés logueado.");
-      return;
-    }
+      if (!this.userId || !this.id_film) {
+        Swal.fire({
+          icon: 'warning',
+          title: 'Acción no permitida',
+          text: 'No se pudo agregar a favoritos. Verifica que estés logueado.',
+        });
+        return;
+      }
 
-    const data = {
-      fk_user: this.userId,
-      fk_film: this.id_film,
-    };
+      const data = {
+        fk_user: this.userId,
+        fk_film: this.id_film,
+      };
 
-    try {
-      const response = await axios.post(
-        "https://qhl0fcehdg.execute-api.us-east-1.amazonaws.com/Prod/favorite",
-        data
-      );
-      alert("Película agregada a favoritos.");
-      this.isFavorite = true;
-    } catch (error) {
-      console.error("Error al agregar a favoritos:", error);
-      alert("Hubo un error al agregar la película a favoritos.");
+      try {
+        if (this.isFavorite) {
+          await axios.delete(
+            `https://qhl0fcehdg.execute-api.us-east-1.amazonaws.com/Prod/favorite`,
+            { data }
+          );
+          Swal.fire({
+            icon: 'success',
+            title: 'Eliminado de favoritos',
+            text: 'Película eliminada de favoritos.',
+          });
+        } else {
+          await axios.post(
+            "https://qhl0fcehdg.execute-api.us-east-1.amazonaws.com/Prod/favorite",
+            data
+          );
+          Swal.fire({
+            icon: 'success',
+            title: 'Agregado a favoritos',
+            text: 'Película agregada a favoritos.',
+          });
+        }
+        this.isFavorite = !this.isFavorite; 
+      } catch (error) {
+        Swal.fire({
+          icon: 'error',
+          title: 'Error',
+          text: 'Hubo un error al agregar o eliminar la película de favoritos.',
+        });
+      }
+    },
+    async checkIfFavorite() {
+      if (!this.userId || !this.id_film) {
+        return;
+      }
+
+      try {
+        const response = await axios.get(
+          `https://qhl0fcehdg.execute-api.us-east-1.amazonaws.com/Prod/favorites/${this.userId}`
+        );
+
+        const favorites = response.data;
+
+        this.isFavorite = favorites.some(
+          (movie) => movie.fk_film === this.id_film
+        );
+      } catch (error) {
+        console.error("Error al verificar favoritos:", error);
+      }
     }
-  },
   },
   mounted() {
     window.scrollTo(0, 0);
     this.handleScroll();
     window.addEventListener("scroll", this.handleScroll);
   },
-  destroyed() {
+  beforeDestroy() {
     window.removeEventListener("scroll", this.handleScroll);
   },
 };
