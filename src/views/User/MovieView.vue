@@ -75,36 +75,38 @@
         <hr class="divider" />
         <div class="suggested">
           <carousel-3d
-            :width="250"
-            :height="150"
-            :display="7"
-            :controls-visible="true"
-            :autoplay="true"
-            :autoplay-hover-pause="true"
-            :border="0"
-            :disable3d="true"
-            :space="265"
-          >
-            <slide
-              v-for="(slide, i) in suggested"
-              :index="i"
-              :key="slide.film_id"
-              class="slide_category"
-            >
-              <template #default="{ index, isCurrent, leftIndex, rightIndex }">
-                <img
-                  :data-index="index"
-                  :class="{
-                    current: isCurrent,
-                    onLeft: leftIndex >= 0,
-                    onRight: rightIndex >= 0,
-                  }"
-                  :src="slide.front_page"
-                  @click="navigateToMovie(slide.film_id)"
-                />
-              </template>
-            </slide>
-          </carousel-3d>
+  v-if="suggested.length"
+  :width="250"
+  :height="150"
+  :display="7"
+  :controls-visible="true"
+  :autoplay="false"
+  :autoplay-hover-pause="true"
+  :border="0"
+  :disable3d="true"
+  :space="265"
+>
+  <slide
+    v-for="(slide, i) in suggested"
+    :index="i"
+    :key="slide.film_id"
+    class="slide_category"
+  >
+    <template #default="{ index, isCurrent, leftIndex, rightIndex }">
+      <img
+        :data-index="index"
+        :class="{
+          current: isCurrent,
+          onLeft: leftIndex >= 0,
+          onRight: rightIndex >= 0,
+        }"
+        :src="slide.front_page"
+        @click="navigateToMovie(slide.film_id)"
+      />
+    </template>
+  </slide>
+</carousel-3d>
+
           <br />
         </div>
       </div>
@@ -218,9 +220,9 @@
 </template>
 
 <script>
-import axios from "axios";
-import LoadAnimation from "../load/load.vue";
-import Swal from "sweetalert2";
+import axios from 'axios';
+import LoadAnimation from '../load/load.vue';
+import Swal from 'sweetalert2';
 
 export default {
   components: {
@@ -234,8 +236,8 @@ export default {
       movie: {},
       suggested: [],
       listComments: [],
-      userComment: "",
-      id_film: "",
+      userComment: '',
+      id_film: '',
       userId: null,
       myEmail: null,
       myComment: null,
@@ -244,15 +246,18 @@ export default {
       isFavorite: false,
     };
   },
-  created() {
-    const authUser = JSON.parse(localStorage.getItem("authUser"));
-    if (authUser && authUser.user) {
-      this.userId = authUser.user.id.toUpperCase();
-      this.myEmail = authUser.user.email;
-    }
-    this.loadMovie();
+  watch: {
+    '$route.params.id': {
+      immediate: true,
+      handler(newId) {
+        this.loadMovie(newId);
+      },
+    },
   },
   methods: {
+    navigateToMovie(filmId) {
+      this.$router.push({ name: 'movie-view', params: { id: filmId } });
+    },
     hoverRating(rating) {
       this.originalRating = this.currentRating;
       this.currentRating = rating;
@@ -264,12 +269,11 @@ export default {
     setRating(rating) {
       this.currentRating = rating;
     },
-    async loadMovie() {
+    async loadMovie(filmId) {
       this.loading = true;
-      const filmId = this.$route.params.id;
       this.id_film = filmId;
 
-      const authUser = JSON.parse(localStorage.getItem("authUser"));
+      const authUser = JSON.parse(localStorage.getItem('authUser'));
       this.userId = authUser.user ? authUser.user.id.toUpperCase() : null;
       this.myEmail = authUser.user ? authUser.user.email : null;
 
@@ -277,7 +281,7 @@ export default {
         const commentsResponse = await axios.get(
           `https://vw5jvgq7hj.execute-api.us-east-1.amazonaws.com/Prod/ratings/${filmId}`
         );
-        if (commentsResponse.data === "No rateings found for the given film") {
+        if (commentsResponse.data === 'No rateings found for the given film') {
           this.listComments = [];
         } else {
           this.myComment =
@@ -289,9 +293,9 @@ export default {
             (comment) => comment.email !== this.myEmail
           );
         }
-        await this.checkIfFavorite(); 
+        await this.checkIfFavorite();
       } catch (error) {
-        console.error("Error al cargar los rateings:", error);
+        console.error('Error al cargar los rateings:', error);
       }
 
       try {
@@ -302,36 +306,31 @@ export default {
 
         this.movie = data.find((movie) => movie.film_id === filmId) || {};
 
-        let lista = data.filter((movie) => movie.film_id !== filmId);
-
-        const filteredMovies = data.filter(
-          (movieI) => movieI.film_id !== filmId
-        );
-        this.suggested = filteredMovies;
+        this.suggested = data.filter((movie) => movie.film_id !== filmId);
       } catch (error) {
-        console.error("Error al cargar la película:", error);
+        console.error('Error al cargar la película:', error);
       } finally {
         this.loading = false;
       }
     },
     playMovie() {
       this.$router.push({
-        name: "moviePlay",
+        name: 'moviePlay',
         params: { id: this.id_film },
       });
     },
     goBack() {
-      this.$router.push({ name: "home" });
+      this.$router.push({ name: 'home' });
     },
     handleScroll() {
       const scrollPosition = window.scrollY;
-      const overlay = document.querySelector(".overlay");
+      const overlay = document.querySelector('.overlay');
       if (overlay) {
         overlay.style.opacity = `${Math.min(scrollPosition / 500, 0.8)}`;
       }
     },
     async submitComment() {
-      if (this.currentRating === 0 || this.userComment.trim() === "") {
+      if (this.currentRating === 0 || this.userComment.trim() === '') {
         Swal.fire({
           icon: 'warning',
           title: 'Datos incompletos',
@@ -340,12 +339,7 @@ export default {
         return;
       }
 
-      if (
-        this.currentRating &&
-        this.userComment &&
-        this.userId &&
-        this.id_film
-      ) {
+      if (this.currentRating && this.userComment && this.userId && this.id_film) {
         const data = {
           grade: this.currentRating,
           comment: this.userComment,
@@ -400,7 +394,7 @@ export default {
           });
         } else {
           await axios.post(
-            "https://qhl0fcehdg.execute-api.us-east-1.amazonaws.com/Prod/favorite",
+            'https://qhl0fcehdg.execute-api.us-east-1.amazonaws.com/Prod/favorite',
             data
           );
           Swal.fire({
@@ -409,7 +403,7 @@ export default {
             text: 'Película agregada a favoritos.',
           });
         }
-        this.isFavorite = !this.isFavorite; 
+        this.isFavorite = !this.isFavorite;
       } catch (error) {
         Swal.fire({
           icon: 'error',
@@ -434,21 +428,20 @@ export default {
           (movie) => movie.fk_film === this.id_film
         );
       } catch (error) {
-        console.error("Error al verificar favoritos:", error);
+        console.error('Error al verificar favoritos:', error);
       }
-    }
+    },
   },
   mounted() {
     window.scrollTo(0, 0);
     this.handleScroll();
-    window.addEventListener("scroll", this.handleScroll);
+    window.addEventListener('scroll', this.handleScroll);
   },
   beforeDestroy() {
-    window.removeEventListener("scroll", this.handleScroll);
+    window.removeEventListener('scroll', this.handleScroll);
   },
 };
 </script>
-
 <style>
 .movie-container {
   background: #061523;

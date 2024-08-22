@@ -22,7 +22,7 @@
         :data-index="index"
         :class="{ current: isCurrent, onLeft: (leftIndex >= 0), onRight: (rightIndex >= 0) }"
         :src="slide.front_page" 
-        style="height:480px">
+        style="height:480px" @click="navigateToMovie(slide.film_id)">
     </template>
   </slide>
 </carousel-3d>
