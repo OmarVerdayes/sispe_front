@@ -1,11 +1,5 @@
 <template>
   <div class="main-container">
-    <input
-      style="margin: 20px"
-      type="text"
-      placeholder="Título, Género y más."
-      class="search-input"
-    />
     <div class="button-container">
       <button @click="openAddModal" class="Btn">
         <div class="sign">+</div>
